@@ -4,19 +4,24 @@
 #include "Queue.h"
 
 
-
-
 typedef struct cqe {
-  int offset;
-  int sz;
-  MR *mr;
+  uint8_t wr_id;
+  uint8_t byte_len;
+  uint8_t qp_num;
+  uint8_t remote_qp_num;
 } CQE;
 
 
-
 typedef struct cq {
-  int cq_num;
+  uint8_t cq_num;
   circular_buffer* queue;
 } CQ;
+
+
+void init_cq(CQ *cq, uint8_t sz);
+
+int cq_push_back(CQ *cq, CQE *cqe);
+
+int cq_pop_front(CQ *cq, CQE *cqe);
 
 #endif

@@ -8,5 +8,4 @@ void init_mr(MR *mr, uint16_t sz){
   for (uint8_t i = 0; i < sz; i++) {
     *(mr->buffer+i) = 0;
   }
-  mr->rkey = 1;
 }

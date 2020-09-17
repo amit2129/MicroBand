@@ -7,7 +7,12 @@
 
 
 ## Embedded Development
+
+* ARM assembly- might be useful for debugging [blog](https://azeria-labs.com/writing-arm-assembly-part-1/)
+* ARM Cortex 4M dev series [youtube-series](https://www.youtube.com/watch?v=mLfS9tQcy8o)
     
 ### Real Time Operating Systems - RTOS
 
 * Embedded development course from the basics to interrupt based multithreading [youtube-series](https://www.youtube.com/watch?v=TEq3-p0GWGI)
+
+### Infiniband and RDMA

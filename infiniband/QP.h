@@ -16,6 +16,8 @@ typedef struct qp {
 
 void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size);
 
+void free_qp(QP *qp);
+
 int post_send(QP *qp, WQE *wr_s);
 
 int post_recv(QP *qp, WQE *wr_r);

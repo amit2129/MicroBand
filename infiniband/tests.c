@@ -1,9 +1,4 @@
-#include <assert.h>
-#include "MR.h"
-#include "CQ.h"
-#include "QP.h"
-#include "Queue.h"
-#include "utils.h"
+#include "tests.h"
 
 #define ELEM_NUM 10
 

@@ -3,6 +3,7 @@
 #include "CQ.h"
 #include "MR.h"
 #include "utils.h"
+#include <string.h>
 
 
 static int qp_counter = 0;

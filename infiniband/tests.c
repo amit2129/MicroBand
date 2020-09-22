@@ -1,3 +1,5 @@
+#if defined(DEBUG)
+
 #include "tests.h"
 
 #define ELEM_NUM 10
@@ -219,3 +221,5 @@ void run_tests() {
   test_qp_send_over_queue_size();
   test_qp_recv_over_queue_size();
 }
+
+#endif

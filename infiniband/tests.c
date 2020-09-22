@@ -31,7 +31,6 @@ void cq_test() {
 
 uint8_t check_mr_data(MR *mr, uint8_t value, uint8_t data_len) {
   uint8_t status =0;
-  int mr_size = mr->sz;
   for (int i = 0; i < data_len; i++) {
     status += print_if_noeq("mr->buffer[i] == value", mr->buffer[i], value);
   }

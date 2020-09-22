@@ -46,7 +46,9 @@ void process_send(QP *qp) {
   WQE wr_s;
   uint8_t ret_pop_front = cb_pop_front(qp->send_queue, &wr_s);
   if (ret_pop_front){
-    print_str("ret_pop_front non-0");
+    #if defined(DEBUG) 
+      print_str("ret_pop_front non-0");
+    #endif
     return;
   }
   
@@ -66,7 +68,9 @@ void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {
   WQE wr_r;
   uint8_t ret_pop_front = cb_pop_front(qp->recv_queue, &wr_r);
   if (ret_pop_front){
-    print_str("ret_pop_front non-0");
+    #if defined(DEBUG)    
+      print_str("ret_pop_front non-0");
+    #endif
     return;
   }
   memcpy(wr_r.sge.addr, data, data_len);

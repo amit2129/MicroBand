@@ -1,3 +1,5 @@
+#if defined(DEBUG)
+
 #ifndef TESTS_H
 #define TESTS_H
 
@@ -27,5 +29,7 @@ void cb_test();
 void mr_test();
 
 void run_tests();
+
+#endif
 
 #endif

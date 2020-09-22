@@ -4,7 +4,7 @@
 
 #define ELEM_NUM 10
 
-void cq_test() {
+uint8_t cq_test() {
   uint8_t status = 0;
   CQ cq;
   init_cq(&cq, ELEM_NUM);
@@ -26,6 +26,8 @@ void cq_test() {
   }
   free_cq(&cq);
   print_str(" - cq_test passed\n");
+
+  return status;
 }
 
 
@@ -41,22 +43,7 @@ uint8_t check_mr_data(MR *mr, uint8_t value, uint8_t data_len) {
 }
 
 
-void test_qp_single_post_recv(QP *qp, uint8_t value, uint8_t data_len) {
-
-
-  // size of uint8_t is 1 Byte, therefore write the value 1 to the ELEM_NUM locations in memory
-  //  uint8_t *input_data = (uint8_t *) malloc(data_len * sizeof(uint8_t));
-  uint8_t input_data[data_len];
-  //  memset(input_data, value, data_len * sizeof(uint8_t));
-
-
-  
-  //  assert(ret == 0);
-  process_recv(qp, input_data, data_len);
-}
-
-
-void test_qp_recv_over_queue_size() {
+uint8_t test_qp_recv_over_queue_size() {
   uint8_t status = 0;
   CQ cq;
   init_cq(&cq, ELEM_NUM);
@@ -91,8 +78,9 @@ void test_qp_recv_over_queue_size() {
     print_str(" - qp_test_over_recv_count failed\n");
   else
     print_str(" - qp_test_over_recv_count passed\n");
-}
 
+  return status;
+}
 
 
 uint8_t test_qp_single_post_send(QP *qp, WQE *wqe) {
@@ -106,7 +94,7 @@ uint8_t test_qp_single_post_send(QP *qp, WQE *wqe) {
 }
 
 
-void test_qp_send_over_queue_size() {
+uint8_t test_qp_send_over_queue_size() {
   uint8_t status = 0;
   CQ cq;
   init_cq(&cq, ELEM_NUM);
@@ -144,10 +132,12 @@ void test_qp_send_over_queue_size() {
     print_str(" - qp_test_over_send_count failed\n");
   else
     print_str(" - qp_test_over_send_count passed\n"); 
+
+  return status;
 }
 
 
-void create_objects_test() {
+uint8_t create_objects_test() {
   for (int i = 0; i < ELEM_NUM; i++) {
     CQ cq;
     init_cq(&cq, ELEM_NUM);
@@ -160,11 +150,12 @@ void create_objects_test() {
   }
 
   print_str(" - create_objects_test passed\n");
+  return 0;
 }
 
 
 
-void cb_test() {
+uint8_t cb_test() {
   uint8_t status = 0;
   circular_buffer cb;
   cb_init(&cb, ELEM_NUM, sizeof(uint8_t));
@@ -189,10 +180,12 @@ void cb_test() {
     print_str(" - cb_test failed\n");
   else
     print_str(" - cb_test passed\n");
+
+  return status;
 }
 
 
-void mr_test() {
+uint8_t mr_test() {
   uint8_t status = 0;
   MR mr;
   init_mr(&mr, ELEM_NUM);
@@ -208,17 +201,20 @@ void mr_test() {
   else
     print_str(" - mr_test passed\n");
 
+  return status;
 }
 
 
 
-void run_tests() {
-  create_objects_test();
-  mr_test();
-  cb_test();
-  cq_test();
-  test_qp_send_over_queue_size();
-  test_qp_recv_over_queue_size();
+uint8_t run_tests() {
+  uint8_t status = 0;
+  status += create_objects_test();
+  status += mr_test();
+  status += cb_test();
+  status += cq_test();
+  status += test_qp_send_over_queue_size();
+  status += test_qp_recv_over_queue_size();
+  return status;
 }
 
 #endif

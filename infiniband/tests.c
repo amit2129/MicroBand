@@ -5,6 +5,7 @@
 #define ELEM_NUM 10
 
 uint8_t cq_test() {
+
   uint8_t status = 0;
   CQ cq;
   init_cq(&cq, ELEM_NUM);
@@ -41,7 +42,6 @@ uint8_t check_mr_data(MR *mr, uint8_t value, uint8_t data_len) {
   }
   return status;
 }
-
 
 uint8_t test_qp_recv_over_queue_size() {
   uint8_t status = 0;
@@ -82,7 +82,6 @@ uint8_t test_qp_recv_over_queue_size() {
   return status;
 }
 
-
 uint8_t test_qp_single_post_send(QP *qp, WQE *wqe) {
   uint8_t status = 0;
   int ret = post_send(qp, wqe);
@@ -93,8 +92,8 @@ uint8_t test_qp_single_post_send(QP *qp, WQE *wqe) {
   return status;
 }
 
-
 uint8_t test_qp_send_over_queue_size() {
+
   uint8_t status = 0;
   CQ cq;
   init_cq(&cq, ELEM_NUM);
@@ -150,10 +149,9 @@ uint8_t create_objects_test() {
   }
 
   print_str(" - create_objects_test passed\n");
+
   return 0;
 }
-
-
 
 uint8_t cb_test() {
   uint8_t status = 0;
@@ -184,7 +182,6 @@ uint8_t cb_test() {
   return status;
 }
 
-
 uint8_t mr_test() {
   uint8_t status = 0;
   MR mr;
@@ -203,7 +200,6 @@ uint8_t mr_test() {
 
   return status;
 }
-
 
 
 uint8_t run_tests() {

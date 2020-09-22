@@ -38,9 +38,9 @@
   #else
     int main(void) {
       printf("running tests\n");
-      run_tests();
+      uint8_t ret = run_tests();
       printf("done running tests\n");
-      return 0;
+      return ret;
     }
   #endif
 

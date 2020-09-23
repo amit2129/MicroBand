@@ -1,1 +1,4 @@
 microband
+microband.c
+microband_*
+*.o

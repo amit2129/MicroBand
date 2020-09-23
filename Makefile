@@ -1,7 +1,9 @@
 # the compiler: gcc for C program, define as g++ for C++
 CC = gcc
-BUILD_DIR=/tmp/microband/
-INFINIBAND_DIR=infiniband/
+BUILD_DIR=build
+SRC=src
+TEST=test
+INFINIBAND_DIR=$(SRC)/infiniband
 
 # compiler flags:
 #  -Wall turns on most, but not all, compiler warnings
@@ -10,32 +12,39 @@ CFLAGS  = -Wall
 # the build target executable:
 TARGET = microband
 
-all: build_test
+all: $(TARGET)_test
 
-$(BUILD_DIR):
-	mkdir -p $(BUILD_DIR)
-	cp $(INFINIBAND_DIR)* $(BUILD_DIR)
-	cp $(TARGET).ino $(BUILD_DIR)$(TARGET).c
+$(TARGET)_run:
+	$(RM) $(TARGET)
+	$(RM) $(TARGET)_test
+	+$(MAKE) build_run -C infiniband
+	cp $(TARGET).ino $(TARGET).c
+	$(CC) $(CFLAGS) -c $(TARGET).c
+	$(CC) $(CFLAGS) -o $(TARGET)_run $$(find . -name "*.o")
+	ln -s $(TARGET)_run $(TARGET)
 
-$(BUILD_DIR)$(TARGET)_test: $(BUILD_DIR)
-	$(RM) $(BUILD_DIR)$(TARGET)_*
-	$(CC) $(CFLAGS) -DDEBUG -o $(BUILD_DIR)$(TARGET)_test $(BUILD_DIR)*.c
-	ln -sf $(BUILD_DIR)$(TARGET)_test $(TARGET)
+$(TARGET)_test:
+	$(RM) $(TARGET)
+	$(RM) $(TARGET)_run
+	+$(MAKE) build_test -C infiniband
+	cp $(TARGET).ino $(TARGET).c
+	$(CC) $(CFLAGS) -DDEBUG -c $(TARGET).c
+	$(CC) $(CFLAGS) -o $(TARGET)_test $$(find . -name "*.o")
+	ln -s $(TARGET)_test $(TARGET)
 
-$(BUILD_DIR)$(TARGET)_run: $(BUILD_DIR)
-	$(RM) $(BUILD_DIR)$(TARGET)_*
-	$(CC) $(CFLAGS) -o $(BUILD_DIR)$(TARGET)_run $(BUILD_DIR)*.c
-	ln -sf $(BUILD_DIR)$(TARGET)_run $(TARGET)
 
-build_test: $(BUILD_DIR)$(TARGET)_test
+build_run: $(TARGET)_run
 
-build_run: $(BUILD_DIR)$(TARGET)_run
+build_test: $(TARGET)_test
 
-test: build_test
-	./$(TARGET)
+test: $(TARGET)_test
+	@./$(TARGET)
 
-run: build_run
-	./$(TARGET)
+run: $(TARGET)_run
+	@./$(TARGET)
 clean:
 	$(RM) $(TARGET)
-	$(RM) -r $(BUILD_DIR)
+	$(RM) $(TARGET)_run
+	$(RM) $(TARGET)_test
+	$(RM) $(TARGET).c
+	$$(find . -name "*.o" -type f -delete)

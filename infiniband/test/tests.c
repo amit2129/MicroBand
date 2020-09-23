@@ -1,4 +1,4 @@
-#if defined(DEBUG)
+#if defined (DEBUG)
 
 #include "tests.h"
 

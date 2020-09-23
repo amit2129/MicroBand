@@ -1,14 +1,13 @@
-#if defined(DEBUG)
 
 #ifndef TESTS_H
 #define TESTS_H
 
 #include <string.h>
-#include "MR.h"
-#include "CQ.h"
-#include "QP.h"
-#include "Queue.h"
-#include "utils.h"
+#include "../src/MR.h"
+#include "../src/CQ.h"
+#include "../src/QP.h"
+#include "../src/Queue.h"
+#include "../src/utils.h"
 
 uint8_t cq_test();
 
@@ -30,4 +29,3 @@ uint8_t run_tests();
 
 #endif
 
-#endif

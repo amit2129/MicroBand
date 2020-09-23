@@ -6,7 +6,7 @@
 
 #if defined(DEBUG)
 
-  #include "tests.h"
+  #include "infiniband/test/tests.h"
   void print_str(char *s) {
     printf("%s", s);
   }

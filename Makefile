@@ -20,13 +20,12 @@ $(BUILD_DIR):
 $(BUILD_DIR)$(TARGET)_test: $(BUILD_DIR)
 	$(RM) $(BUILD_DIR)$(TARGET)_*
 	$(CC) $(CFLAGS) -DDEBUG -o $(BUILD_DIR)$(TARGET)_test $(BUILD_DIR)*.c
-	ln -sf $(BUILD_DIR)$(TARGET)_test microband
+	ln -sf $(BUILD_DIR)$(TARGET)_test $(TARGET)
 
 $(BUILD_DIR)$(TARGET)_run: $(BUILD_DIR)
 	$(RM) $(BUILD_DIR)$(TARGET)_*
 	$(CC) $(CFLAGS) -o $(BUILD_DIR)$(TARGET)_run $(BUILD_DIR)*.c
-	ln -sf $(BUILD_DIR)$(TARGET)_run microband
-
+	ln -sf $(BUILD_DIR)$(TARGET)_run $(TARGET)
 
 build_test: $(BUILD_DIR)$(TARGET)_test
 

@@ -26,7 +26,7 @@ test_all: test_sr test_cl
 
 
 $(TARGET):
-	$(CC) ../../*.o -o $(TARGET) $(TARGET).c
+	$(CC) $(CFLAGS) ../../*.o -o $(TARGET) $(TARGET).c
 
 $(TARGET)_dockers: $(TARGET)
 	sudo docker build . -t $(SERV) -f server_dockerfile

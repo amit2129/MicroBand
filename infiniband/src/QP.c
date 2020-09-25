@@ -40,7 +40,7 @@ int post_recv(QP *qp, WQE *wr_r){
 }
 
 
-void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *)) {
+void process_send_handle(QP *qp, void *send_util) {
   // do_some_sending
   WQE wr_s;
   uint8_t ret_pop_front = cb_pop_front(qp->send_queue, &wr_s);
@@ -51,7 +51,7 @@ void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *))
     return;
   }
 
-  uint8_t ret = (*send)(qp, &wr_s, send_util);
+  uint8_t ret = (*qp_send_func)(qp, &wr_s, send_util);
 
   CQE cqe;
 
@@ -96,7 +96,7 @@ void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {
 }
 
 
-void process_recv_handle(QP *qp, void *recv_util, CQE (*recv)(QP *, WQE *, void *)) {
+void process_recv_handle(QP *qp, void *recv_util) {
   WQE wr_r;
   uint8_t ret_pop_front = cb_pop_front(qp->recv_queue, &wr_r);
   if (ret_pop_front){
@@ -106,7 +106,7 @@ void process_recv_handle(QP *qp, void *recv_util, CQE (*recv)(QP *, WQE *, void 
     return;
   }
 
-  CQE cqe = (*recv)(qp, &wr_r, recv_util);
+  CQE cqe = (*qp_recv_func)(qp, &wr_r, recv_util);
   cq_push_back(qp->completion_queue, &cqe);
  
 //  CQE cqe;

@@ -21,9 +21,13 @@ build_run:
 test_traffic: build_run
 	cp src/infiniband.h test/docker_traffic_test/
 	@+$(MAKE) test_cl -C test/docker_traffic_test
-	@+$(MAKE) test_sr -C test/docker_traffic_test
+
+test_pingpong: build_run
+	@+$(MAKE) test_all -C test/docker_pingpong
+
 clean:
 	@+$(MAKE) clean -C test/docker_traffic_test
+	@+$(MAKE) clean -C test/docker_pingpong
 	$(RM) *.o
 	$(RM) src/*.gch
 	$(RM) test/*.gch

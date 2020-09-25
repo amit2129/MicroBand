@@ -82,12 +82,16 @@ uint8_t test_qp_recv_over_queue_size() {
   return status;
 }
 
+uint8_t ret_success(QP *qp, WQE *wr_s, void *none) {
+  return 0;
+}
+
 
 uint8_t test_qp_single_post_send(QP *qp, WQE *wqe) {
   uint8_t status = 0;
   int ret = post_send(qp, wqe);
   status += print_if_noeq("ret test_qp", ret, 0);
-  process_send(qp);
+  process_send(qp, NULL, &ret_success);
   if (status)
     print_str(" - test_qp_single_post_send failed\n");
   return status;

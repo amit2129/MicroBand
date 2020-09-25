@@ -22,8 +22,10 @@ int post_send(QP *qp, WQE *wr_s);
 
 int post_recv(QP *qp, WQE *wr_r);
 
-void process_send(QP *qp);
+void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *));
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len);
+
+void process_recv_handle(QP *qp, void *recv_util, CQE (*recv)(QP *, WQE *, void *));
 
 #endif

@@ -40,6 +40,12 @@ build_test: $(TARGET)_test
 test: $(TARGET)_test
 	@./$(TARGET)
 
+test_traffic:
+	+$(MAKE) test_traffic -C infiniband
+
+test_pingpong:
+	+$(MAKE) test_pingpong -C infiniband
+
 run: $(TARGET)_run
 	@./$(TARGET)
 clean:
@@ -48,3 +54,5 @@ clean:
 	$(RM) $(TARGET)_test
 	$(RM) $(TARGET).c
 	$$(find . -name "*.o" -type f -delete)
+	@+$(MAKE) clean -C infiniband
+

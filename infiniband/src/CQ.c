@@ -3,7 +3,7 @@
 
 static int cq_counter = 0;
 
-void init_cq(CQ *cq, uint8_t sz) {
+void init_cq(CQ *cq, uint16_t sz) {
   cq->cq_num = ++cq_counter;
   cb_init(&cq->queue, sz, sizeof(CQE));
 }

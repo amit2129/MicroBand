@@ -14,8 +14,8 @@ TARGET2=test_client
 all: $(TARGET1) $(TARGET2)
 
 test_sr: $(TARGET1)_docker $(TARGET2)_docker
-	sudo docker run -t --rm --network=test_network --name=test_server docker_server&
-	sudo docker run -itd --rm --network=test_network docker_client
+	sudo docker run -d --rm --network=test_network --name=test_server docker_server
+	sudo docker run -it --rm --network=test_network docker_client
 
 test_cl: $(TARGET1)_docker $(TARGET2)_docker
 	sudo docker run -itd --rm --network=test_network --name=test_server docker_server

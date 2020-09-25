@@ -21,8 +21,6 @@ test_cl: $(TARGET1)_docker $(TARGET2)_docker
 	sudo docker run -itd --rm --network=test_network --name=test_server docker_server
 	sudo docker run -it --rm --network=test_network docker_client
 
-
-
 $(TARGET1):
 	$(CC) ../../*.o -o $(TARGET1) $(TARGET1).c
 
@@ -38,5 +36,7 @@ $(TARGET2)_docker: $(TARGET2)
 	touch $(TARGET2)_docker
 
 clean:
+	$(RM) $(TARGET1)_docker
+	$(RM) $(TARGET2)_docker
 	$(RM) $(TARGET1)
 	$(RM) $(TARGET2)

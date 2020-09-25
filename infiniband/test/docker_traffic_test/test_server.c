@@ -14,9 +14,20 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 	int sock = *(int *)send_util;
 	printf("sending data: %s\n", wr_s->sge.addr);
 	send(sock , wr_s->sge.addr , wr_s->sge.length , 0);
-	//printf("sock in send is: %d", sock);
-	//send(sock , "hello" , strlen("hello") , 0);
 	return 0;
+}
+
+CQE recv_data(QP *qp, WQE *wr_r, void *recv_util) {
+	int sock = *(int *)recv_util;
+	int valread = read(sock, wr_r->sge.addr, wr_r->sge.length);
+	CQE cqe;
+	cqe.status = (valread == 0);
+	cqe.byte_len = valread;
+	cqe.wr_id = wr_r->wr_id;
+	cqe.qp_num = qp->qp_num;
+	cqe.remote_qp_num = qp->remote_qp_num;
+	return cqe;
+	
 }
 
 
@@ -24,7 +35,10 @@ void print_mr(MR *mr) {
 	int i;
 	for (i = 0; i < mr->sz; i++)
 	{
-	    if (i > 0) printf(":");
+	    if (i > 0)
+		    printf(":");
+	    else
+		    printf("\n");
 	    printf("%02X", mr->buffer[i]);
 	}
 	printf("\n");
@@ -60,12 +74,11 @@ int main(int argc, char const *argv[])
 	wqe2.wr_id = get_wr_id();
 	post_recv(&qp, &wqe2);
 
-
-//	WQE wqe3;
-//	wqe3.sge.addr = mr.buffer;
-//	wqe3.sge.length = mr.sz;
-//	wqe3.wr_id = get_wr_id();
-//	post_send(&qp, &wqe3);
+	WQE wqe3;
+	wqe3.sge.addr = mr.buffer + 5;
+	wqe3.sge.length = mr.sz / 2;
+	wqe3.wr_id = get_wr_id();
+	post_recv(&qp, &wqe3);
 
 
 
@@ -86,7 +99,7 @@ int main(int argc, char const *argv[])
 	address.sin_addr.s_addr = INADDR_ANY; 
 	address.sin_port = htons( PORT ); 
 	printf("waiting\n");
-	// Forcefully attaching socket to the port 8080 
+
 	if (bind(server_fd, (struct sockaddr *)&address, sizeof(address))<0) 
 	{ 
 		perror("bind failed"); 
@@ -104,36 +117,22 @@ int main(int argc, char const *argv[])
 		exit(EXIT_FAILURE); 
 	}
 
-//	global_socket = new_socket;
 
-	valread = read(new_socket , buffer, 1024);
-	printf("buffer is: %s\n", buffer);
-	process_recv(&qp, buffer, 20);
+	process_recv_handle(&qp, (void *)&new_socket, &recv_data);
 	print_mr(&mr);
 
-//	CQE cqe;
+	CQE cqe;
     
-//	printf("cq_pop_front_ret: %d\n", cq_pop_front(&cq, &cqe));
-//	printf("cqe byte_len: %d\n", cqe.byte_len);
-//	printf("cqe.wr_id: %d\n", cqe.wr_id);
+	printf("cq_pop_front_ret: %d\n", cq_pop_front(&cq, &cqe));
+	printf("cqe status: %d\n", cqe.status);
+	printf("cqe byte_len: %d\n", cqe.byte_len);
+	printf("cqe.wr_id: %d\n", cqe.wr_id);
 
-
-	valread = read(new_socket, buffer, 1024);
-	process_recv(&qp, buffer, 20);
-
-	printf("buffer is: %s\n", buffer);
+	process_recv_handle(&qp, (void *)&new_socket, &recv_data);
 	print_mr(&mr);
-	printf("mr is: %s\n", mr.buffer);
 
-//	valread = read(new_socket , buffer, 20);
-//	process_recv(&qp, buffer, 20);
-
-//	printf("cq_pop_front_ret: %d\n", cq_pop_front(&cq, &cqe));
-//	printf("cqe byte_len: %d\n", cqe.byte_len);
-//	printf("mr: %s\n", mr.buffer);
-
-
-//	process_send(&qp, &send_data);	
+	process_recv_handle(&qp, (void *)&new_socket, &recv_data);
+	print_mr(&mr);
 	return 0; 
 } 
 

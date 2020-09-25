@@ -4,6 +4,7 @@ microband_*
 *.o
 
 
+infiniband/test/docker_pingpong/pingpong
 infiniband/test/docker_traffic_test/test_client
 infiniband/test/docker_traffic_test/test_server
 infiniband/test/docker_traffic_test/infiniband.h

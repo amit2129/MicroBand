@@ -26,4 +26,6 @@ void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *))
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len);
 
+void process_recv_handle(QP *qp, void *recv_util, CQE (*recv)(QP *, WQE *, void *));
+
 #endif

@@ -1,0 +1,6 @@
+FROM ubuntu:latest
+
+ADD test_server /
+#RUN chmod +x /test_server
+ENTRYPOINT ["/test_server"]
+

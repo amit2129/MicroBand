@@ -91,7 +91,7 @@ uint8_t test_qp_single_post_send(QP *qp, WQE *wqe) {
   uint8_t status = 0;
   int ret = post_send(qp, wqe);
   status += print_if_noeq("ret test_qp", ret, 0);
-  process_send(qp, NULL, &ret_success);
+  process_send_handle(qp, NULL);
   if (status)
     print_str(" - test_qp_single_post_send failed\n");
   return status;
@@ -211,6 +211,7 @@ uint8_t mr_test() {
 
 
 uint8_t run_tests() {
+  qp_send_func = &ret_success;
   uint8_t status = 0;
   status += create_objects_test();
   status += mr_test();

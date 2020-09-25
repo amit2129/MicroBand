@@ -1,0 +1,6 @@
+FROM ubuntu:latest
+
+COPY client_run.sh /usr/local/bin/
+ADD pingpong /
+
+ENTRYPOINT ["client_run.sh"]

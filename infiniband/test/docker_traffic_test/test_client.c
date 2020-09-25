@@ -8,23 +8,20 @@
 #define PORT 1024
 
 
-uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
+uint8_t send_data(QP *qp, WQE *wr_s, void *sock_ptr) {
 
-	int sock = *(int *)send_util;
-	printf("sending data: %s\n", wr_s->sge.addr);
+	int sock = *(int *)sock_ptr;
 	send(sock , wr_s->sge.addr , wr_s->sge.length , 0);
-	//printf("sock in send is: %d", sock);
-	//send(sock , "hello" , strlen("hello") , 0);
 	return 0;
 }
 
 
-void print_mr(MR *mr) {
+void print_mr(uint8_t *buffer, uint16_t size) {
 	int i;
-	for (i = 0; i < mr->sz; i++)
+	for (i = 0; i < size; i++)
 	{
 	    if (i > 0) printf(":");
-	    printf("%02X", mr->buffer[i]);
+	    printf("%02X", buffer[i]);
 	}
 	printf("\n");
 }
@@ -33,7 +30,7 @@ int main(int argc, char const *argv[])
 { 
 	int sock = 0, valread; 
 	struct sockaddr_in serv_addr; 
-	char *hello = "Hello from client"; 
+	char *data = "Amit sending data"; 
 	char buffer[1024] = {0};
         printf("host is: %s\n", argv[1]);
 	CQ cq;
@@ -44,7 +41,7 @@ int main(int argc, char const *argv[])
 	init_qp(&qp, &mr, &cq, 20);
 	sleep(3);
 
-	strcpy(mr.buffer, "Amit sending data");
+	strcpy(mr.buffer, data);
 	printf("data written to mr: %s\n", mr.buffer);
 	WQE wqe1;
 	wqe1.sge.addr = mr.buffer;
@@ -58,8 +55,9 @@ int main(int argc, char const *argv[])
 	wqe2.sge.addr = mr.buffer;
 	wqe2.sge.length = mr.sz / 2;
 	wqe2.wr_id = get_wr_id();
-
 	ret = post_send(&qp, &wqe2);
+
+	post_send(&qp, &wqe1);
 //	post_send(&qp, &wqe2);
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
@@ -83,9 +81,8 @@ int main(int argc, char const *argv[])
 		printf("\nConnection Failed \n"); 
 		return -1; 
 	}
-	sleep(1);
+//	sleep(1);
 
-	printf("sock in out is: %d", sock);
 	process_send(&qp,(void *)&sock, &send_data);
 	//process_send(&qp,(void *)&sock , &send_data);
 
@@ -100,6 +97,14 @@ int main(int argc, char const *argv[])
 	process_send(&qp,(void *)&sock, &send_data);
 
 	printf("cq_pop2: %d\n", cq_pop_front(qp.completion_queue, &cqe));
+	printf("cqe.status: %d\n", cqe.status);
+	printf("cqe.byte_len: %d\n", cqe.byte_len);
+	printf("cqe.qp_num: %d\n", cqe.qp_num);
+	printf("completion received for wr_id: %d\n", cqe.wr_id);
+
+	process_send(&qp,(void *)&sock, &send_data);
+
+	printf("cq_pop3: %d\n", cq_pop_front(qp.completion_queue, &cqe));
 	printf("cqe.status: %d\n", cqe.status);
 	printf("cqe.byte_len: %d\n", cqe.byte_len);
 	printf("cqe.qp_num: %d\n", cqe.qp_num);

@@ -20,3 +20,6 @@ build_run:
 
 clean:
 	$(RM) *.o
+	$(RM) src/*.gch
+	$(RM) test/*.gch
+

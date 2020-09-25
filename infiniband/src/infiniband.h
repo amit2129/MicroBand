@@ -3,3 +3,4 @@
 #include "CQ.h"
 #include "Queue.h"
 #include "WR.h"
+#include "SGE.h"

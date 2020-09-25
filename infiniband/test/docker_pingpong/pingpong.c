@@ -62,15 +62,12 @@ void int_to_buffer(uint32_t n, uint8_t *buffer ) {
 
 int run_server() 
 { 
-	int server_fd, new_socket, valread; 
+	int server_fd, new_socket; 
 	struct sockaddr_in address; 
 	int opt = 1; 
 	int addrlen = sizeof(address); 
-	uint8_t buffer[1024] = {0}; 
-	char *hello = "Hello from server";
 
-	int iters = 10;
-	uint32_t num = 0;
+	int iters = 30;
 	CQ cq;
 	init_cq(&cq, 10);
 	MR mr;
@@ -83,19 +80,9 @@ int run_server()
 	recv_wqe.sge.addr = mr.buffer;
 	recv_wqe.sge.length = sizeof(uint32_t);
 
-	for (int i = 0; i < iters; i++) {
-		recv_wqe.wr_id = get_wr_id();
-		post_recv(&qp, &recv_wqe);
-	}
-
 	WQE send_wqe;
 	send_wqe.sge.addr = mr.buffer;
 	send_wqe.sge.length = sizeof(uint32_t);
-
-	for (int i = 0; i < iters; i++) {
-		send_wqe.wr_id = get_wr_id();
-		post_send(&qp, &send_wqe);
-	}	
 
 	// Creating socket file descriptor 
 	if ((server_fd = socket(AF_INET, SOCK_STREAM, 0)) == 0) 
@@ -135,11 +122,29 @@ int run_server()
 	printf("\nconnection success\n");
 	uint32_t ret_num = 0;
 	uint32_t rc = 0;
+	CQE cqe;
+	recv_wqe.wr_id = get_wr_id();
+	post_recv(&qp, &recv_wqe);
+
+	send_wqe.wr_id = get_wr_id();
+	post_send(&qp, &send_wqe);
 	for (int i =0; i < iters; i++) {
 		printf("iter is: %d, ret_num:%d\n", i, ret_num);
 		rc += !(ret_num == i);
+
 		process_send(&qp,(void *)&new_socket, &send_data);
+		cq_pop_front(&cq, &cqe);
+		send_wqe.wr_id = get_wr_id();
+		post_send(&qp, &send_wqe);
+
+
+		// receive, poll cq and push new recv
 		process_recv_handle(&qp, (void *)&new_socket, &recv_data);
+		cq_pop_front(&cq, &cqe);
+		recv_wqe.wr_id = get_wr_id();
+		post_recv(&qp, &recv_wqe);
+
+		// write new_num to buffer
 		ret_num = buffer_to_int(mr.buffer);
 		int_to_buffer(ret_num, mr.buffer);
 
@@ -152,11 +157,10 @@ int run_server()
 
 int run_client(char const *host_address) 
 { 
-	int sock = 0, valread; 
+	int sock = 0;
 	struct sockaddr_in serv_addr; 
 	
-	int iters = 10;
-	uint32_t num = 0;
+	int iters = 30;
 	CQ cq;
 	init_cq(&cq, 10);
 	MR mr;
@@ -169,19 +173,11 @@ int run_client(char const *host_address)
 	recv_wqe.sge.addr = mr.buffer;
 	recv_wqe.sge.length = sizeof(uint32_t);
 
-	for (int i = 0; i < iters; i++) {
-		recv_wqe.wr_id = get_wr_id();
-		post_recv(&qp, &recv_wqe);
-	}
-
 	WQE send_wqe;
 	send_wqe.sge.addr = mr.buffer;
 	send_wqe.sge.length = sizeof(uint32_t);
 
-	for (int i = 0; i < iters; i++) {
-		send_wqe.wr_id = get_wr_id();
-		post_send(&qp, &send_wqe);
-	}
+	
 
 	if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) 
 	{ 
@@ -210,13 +206,28 @@ int run_client(char const *host_address)
 	uint32_t ret_num = 0;
 	int_to_buffer(ret_num, mr.buffer);
 	uint32_t rc = 0;
+	recv_wqe.wr_id = get_wr_id();
+	post_recv(&qp, &recv_wqe);
+
+	send_wqe.wr_id = get_wr_id();
+	post_send(&qp, &send_wqe);
+
+	CQE cqe;
 	for (int i =0; i < iters; i++) {
 		process_recv_handle(&qp, (void *)&sock, &recv_data);
+		cq_pop_front(&cq, &cqe);
+		recv_wqe.wr_id = get_wr_id();
+		post_recv(&qp, &recv_wqe);
+
 		ret_num = buffer_to_int(mr.buffer);
 		printf("iter is: %d, ret_num:%d\n", i, ret_num);
 		rc += !(ret_num == i);
 		int_to_buffer(ret_num+1, mr.buffer);
+
 		process_send(&qp,(void *)&sock, &send_data);
+		cq_pop_front(&cq, &cqe);
+		send_wqe.wr_id = get_wr_id();
+		post_send(&qp, &send_wqe);
 
 	}
 

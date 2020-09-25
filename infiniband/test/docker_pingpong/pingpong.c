@@ -17,6 +17,8 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 	return 0;
 }
 
+uint8_t (*qp_send_func)(QP *, WQE *, void *) = &send_data;
+
 CQE recv_data(QP *qp, WQE *wr_r, void *recv_util) {
 	int sock = *(int *)recv_util;
 	int valread = read(sock, wr_r->sge.addr, wr_r->sge.length);
@@ -29,6 +31,8 @@ CQE recv_data(QP *qp, WQE *wr_r, void *recv_util) {
 	return cqe;
 	
 }
+
+CQE (*qp_recv_func)(QP *, WQE *, void *) = &recv_data;
 
 void print_mr(MR *mr) {
 	int i;
@@ -132,14 +136,14 @@ int run_server()
 		printf("iter is: %d, ret_num:%d\n", i, ret_num);
 		rc += !(ret_num == i);
 
-		process_send(&qp,(void *)&new_socket, &send_data);
+		process_send_handle(&qp,(void *)&new_socket);
 		cq_pop_front(&cq, &cqe);
 		send_wqe.wr_id = get_wr_id();
 		post_send(&qp, &send_wqe);
 
 
 		// receive, poll cq and push new recv
-		process_recv_handle(&qp, (void *)&new_socket, &recv_data);
+		process_recv_handle(&qp, (void *)&new_socket);
 		cq_pop_front(&cq, &cqe);
 		recv_wqe.wr_id = get_wr_id();
 		post_recv(&qp, &recv_wqe);
@@ -214,7 +218,7 @@ int run_client(char const *host_address)
 
 	CQE cqe;
 	for (int i =0; i < iters; i++) {
-		process_recv_handle(&qp, (void *)&sock, &recv_data);
+		process_recv_handle(&qp, (void *)&sock);
 		cq_pop_front(&cq, &cqe);
 		recv_wqe.wr_id = get_wr_id();
 		post_recv(&qp, &recv_wqe);
@@ -224,7 +228,7 @@ int run_client(char const *host_address)
 		rc += !(ret_num == i);
 		int_to_buffer(ret_num+1, mr.buffer);
 
-		process_send(&qp,(void *)&sock, &send_data);
+		process_send_handle(&qp,(void *)&sock);
 		cq_pop_front(&cq, &cqe);
 		send_wqe.wr_id = get_wr_id();
 		post_send(&qp, &send_wqe);

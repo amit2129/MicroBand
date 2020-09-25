@@ -19,10 +19,11 @@ build_run:
 	$(CC) -c src/*.c
 
 test_traffic: build_run
-	cp src/infiniband.h test/docker_traffic_test/
+	sudo docker network ls | grep test_network > /dev/null || sudo docker network create test_network	
 	@+$(MAKE) test_cl -C test/docker_traffic_test
 
 test_pingpong: build_run
+	sudo docker network ls | grep test_network > /dev/null || sudo docker network create test_network	
 	@+$(MAKE) test_all -C test/docker_pingpong
 
 clean:

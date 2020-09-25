@@ -49,6 +49,9 @@ test: $(TARGET)_test
 test_traffic:
 	+$(MAKE) test_traffic -C infiniband
 
+test_pingpong:
+	+$(MAKE) test_pingpong -C infiniband
+
 run: $(TARGET)_run
 	@./$(TARGET)
 

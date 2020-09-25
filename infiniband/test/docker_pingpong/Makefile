@@ -13,11 +13,11 @@ TARGET=pingpong
 all: $(TARGET)
 
 test_sr: $(TARGET)_dockers 
-	sudo docker run -d --rm --network=test_network --name=test_server docker_server
-	sudo docker run -it --rm --network=test_network docker_client
+	sudo docker run -d --rm --network=test_network docker_client
+	sudo docker run -it --rm --network=test_network --name=test_server docker_server
 
 test_cl: $(TARGET)_dockers 
-	sudo docker run -itd --rm --network=test_network --name=test_server docker_server
+	sudo docker run -d --rm --network=test_network --name=test_server docker_server
 	sudo docker run -it --rm --network=test_network docker_client
 
 

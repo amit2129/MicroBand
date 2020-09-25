@@ -80,8 +80,8 @@ void process_send_handle(QP *qp, void *send_util) {
     cqe.remote_qp_num = qp->remote_qp_num;
     cqe.status = 0;
     cq_push_back(qp->completion_queue, &cqe);
-  } 
- }
+  }
+}
 
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {

@@ -27,6 +27,7 @@ build_run_ll:
 	$(CC) -DQP_LINKED_LIST -c src/*.c
 
 clean:
+	@+$(MAKE) clean -C test/docker_traffic_test
 	$(RM) *.o
 	$(RM) src/*.gch
 	$(RM) test/*.gch

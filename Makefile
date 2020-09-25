@@ -46,6 +46,9 @@ test: $(TARGET)_test
 	@./$(TARGET)
 	+$(MAKE) -C $(COMMON_DIR) test
 
+test_traffic:
+	+$(MAKE) test_traffic -C infiniband
+
 run: $(TARGET)_run
 	@./$(TARGET)
 
@@ -57,3 +60,4 @@ clean:
 	$(RM) $(TARGET).o
 	+$(MAKE) clean -C infiniband
 	+$(MAKE) clean -C $(COMMON_DIR)
+

@@ -1,0 +1,7 @@
+FROM ubuntu:latest
+
+COPY client_run.sh /usr/local/bin/
+ADD test_client /
+
+#RUN chmod +x /test_client
+ENTRYPOINT ["client_run.sh"]

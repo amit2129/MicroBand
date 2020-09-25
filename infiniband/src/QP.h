@@ -14,6 +14,10 @@ typedef struct qp {
 } QP;
 
 
+extern uint8_t (*qp_send_func)(QP *, WQE *, void *);
+
+extern CQE (*qp_recv_func)(QP *, WQE *, void *);
+
 void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size);
 
 void free_qp(QP *qp);
@@ -22,8 +26,10 @@ int post_send(QP *qp, WQE *wr_s);
 
 int post_recv(QP *qp, WQE *wr_r);
 
-void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *));
+void process_send_handle(QP *qp, void *send_util);
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len);
+
+void process_recv_handle(QP *qp, void *recv_util);
 
 #endif

@@ -164,7 +164,6 @@ int run_client(char const *host_address)
 	QP qp;
 	init_qp(&qp, &mr, &cq, 10);
 
-	sleep(3);
 
 	WQE recv_wqe;
 	recv_wqe.sge.addr = mr.buffer;

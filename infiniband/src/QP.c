@@ -9,7 +9,6 @@
 static int qp_counter = 0;
  
 void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size) {
-
   qp->qp_num = ++qp_counter;
   qp->send_queue = (circular_buffer *) malloc(sizeof(circular_buffer));
   qp->recv_queue = (circular_buffer *) malloc(sizeof(circular_buffer));
@@ -41,7 +40,7 @@ int post_recv(QP *qp, WQE *wr_r){
 }
 
 
-void process_send(QP *qp) {
+void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *)) {
   // do_some_sending
   WQE wr_s;
   uint8_t ret_pop_front = cb_pop_front(qp->send_queue, &wr_s);
@@ -51,17 +50,30 @@ void process_send(QP *qp) {
     #endif
     return;
   }
+
+  uint8_t ret = (*send)(qp, &wr_s, send_util);
+
+  CQE cqe;
+
+  if (ret) {
+    cqe.wr_id = wr_s.wr_id;
+    cqe.status = 1;
+    cq_push_back(qp->completion_queue, &cqe);
+  }
+  else {
+    cqe.byte_len = wr_s.sge.length;
+    cqe.wr_id = wr_s.wr_id;
+    cqe.qp_num = qp->qp_num;
+    cqe.remote_qp_num = qp->remote_qp_num;
+    cqe.status = 0;
+    cq_push_back(qp->completion_queue, &cqe);
+  }
+
   
   // wr_s is now initialized and the physical execution of the send_pipeline should be called.
   // lets assume the send happened and we will report a completion to the CQ
   // TODO: implement actual sending
-  CQE cqe;
-  cqe.byte_len = wr_s.sge.length;
-  cqe.wr_id = wr_s.wr_id;
-  cqe.qp_num = qp->qp_num;
-  cqe.remote_qp_num = qp->remote_qp_num;
-  cq_push_back(qp->completion_queue, &cqe);
-}
+ }
 
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {

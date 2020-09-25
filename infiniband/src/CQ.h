@@ -5,8 +5,9 @@
 
 
 typedef struct cqe {
-  uint8_t wr_id;
-  uint8_t byte_len;
+  uint16_t wr_id;
+  uint16_t byte_len;
+  uint8_t status;
   uint8_t qp_num;
   uint8_t remote_qp_num;
 } CQE;
@@ -18,7 +19,7 @@ typedef struct cq {
 } CQ;
 
 
-void init_cq(CQ *cq, uint8_t sz);
+void init_cq(CQ *cq, uint16_t sz);
 
 void free_cq(CQ *cq);
 

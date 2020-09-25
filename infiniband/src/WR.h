@@ -2,11 +2,14 @@
 #define WR_H
 #include "SGE.h"
 #include <stdint.h>
-
+ 
 
 typedef struct wqe {
   SGE sge;
-  uint8_t wr_id;
+  uint16_t wr_id;
 } WQE;
+
+
+uint16_t get_wr_id();
 
 #endif

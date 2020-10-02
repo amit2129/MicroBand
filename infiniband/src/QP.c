@@ -6,6 +6,9 @@
 #include <string.h>
 
 
+uint8_t (*qp_send_func)(QP *, WQE *, void *) = NULL;
+CQE (*qp_recv_func)(QP *, WQE *, void *) = NULL;
+
 static int qp_counter = 0;
  
 void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size) {
@@ -45,9 +48,6 @@ void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *))
   WQE wr_s;
   uint8_t ret_pop_front = cb_pop_front(qp->send_queue, &wr_s);
   if (ret_pop_front){
-    #if defined(DEBUG) 
-      print_str("ret_pop_front non-0");
-    #endif
     return;
   }
 
@@ -57,7 +57,7 @@ void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *))
 
   if (ret) {
     cqe.wr_id = wr_s.wr_id;
-    cqe.status = 1;
+    cqe.status = ret;
     cq_push_back(qp->completion_queue, &cqe);
   }
   else {
@@ -67,12 +67,7 @@ void process_send(QP *qp, void *send_util, uint8_t (*send)(QP *, WQE *, void *))
     cqe.remote_qp_num = qp->remote_qp_num;
     cqe.status = 0;
     cq_push_back(qp->completion_queue, &cqe);
-  }
-
-  
-  // wr_s is now initialized and the physical execution of the send_pipeline should be called.
-  // lets assume the send happened and we will report a completion to the CQ
-  // TODO: implement actual sending
+  } 
  }
 
 

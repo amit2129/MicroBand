@@ -57,4 +57,3 @@ clean:
 	$$(find . -name "*.o" -type f -delete)
 	@+$(MAKE) clean -C $(COMMON_DIR)
 	@+$(MAKE) clean -C infiniband
-

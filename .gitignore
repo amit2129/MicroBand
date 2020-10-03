@@ -2,3 +2,5 @@ microband
 microband.c
 microband_*
 *.o
+*.un~
+*.swp

@@ -18,6 +18,10 @@ build_run:
 	$(RM) -r *.o
 	$(CC) -c src/*.c
 
+build_run_ll:
+	$(RM) -r *.o
+	$(CC) -DQP_LINKED_LIST -c src/*.c
+
 test_traffic: build_run
 	sudo docker network ls | grep test_network > /dev/null || sudo docker network create test_network	
 	@+$(MAKE) test_cl -C test/docker_traffic_test

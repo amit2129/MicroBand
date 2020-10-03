@@ -2,7 +2,11 @@
 #define QP_H
 #include "CQ.h"
 #include "WR.h"
-
+#ifdef QP_LINKED_LIST
+	#include <stdlib.h>
+	#include "../../common/src/utils.h"
+	extern linked_list qp_ll;// = {.count=0, .head=NULL};
+#endif
 
 typedef struct qp {
   uint8_t qp_num;

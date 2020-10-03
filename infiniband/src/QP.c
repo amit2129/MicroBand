@@ -4,6 +4,11 @@
 #include "MR.h"
 #include "utils.h"
 #include <string.h>
+#ifdef QP_LINKED_LIST
+	#include <stdlib.h>
+	#include "../../common/src/utils.h"
+	linked_list qp_ll = {0, NULL};
+#endif
 
 
 uint8_t (*qp_send_func)(QP *, WQE *, void *) = NULL;
@@ -19,6 +24,9 @@ void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size) {
   cb_init(qp->recv_queue, queue_size, sizeof(WQE));
   qp->completion_queue = cq;
   qp->mem_reg = mr;
+  #ifdef QP_LINKED_LIST
+  	ll_insert_data(&qp_ll, (void *)qp);
+  #endif
 }
 
 void free_qp(QP *qp) {
@@ -29,6 +37,11 @@ void free_qp(QP *qp) {
   
   free_cq(qp->completion_queue);
   free_mr(qp->mem_reg);
+
+  #ifdef QP_LINKED_LIST
+  	ll_remove_data(&qp_ll, (void *)qp);
+  #endif
+
 }
 
 

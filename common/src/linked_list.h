@@ -19,7 +19,7 @@ void ll_init(linked_list *ll);
 void ll_insert(linked_list *ll, ll_node *new_node);
 
 
-void *get_object_with_data(linked_list, int (*comp_func)(void *, void *));
+void *get_object_with_data(linked_list *, int (*comp_func)(void *, void *), void *comparison_data);
 
 
 int remove_node(linked_list *ll, ll_node *node);

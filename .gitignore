@@ -10,3 +10,6 @@ infiniband/test/docker_traffic_test/test_server
 infiniband/test/docker_traffic_test/infiniband.h
 infiniband/test/docker_traffic_test/test_client_docker
 infiniband/test/docker_traffic_test/test_server_docker
+
+*.un~
+*.swp

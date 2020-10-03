@@ -23,8 +23,12 @@ void init_cq(CQ *cq, uint16_t sz);
 
 void free_cq(CQ *cq);
 
+int cqe_count(CQ *cq);
+
 int cq_push_back(CQ *cq, CQE *cqe);
 
 int cq_pop_front(CQ *cq, CQE *cqe);
+
+void flush_cq(CQ *cq);
 
 #endif

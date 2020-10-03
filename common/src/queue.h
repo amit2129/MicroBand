@@ -24,4 +24,6 @@ int cb_push_back(circular_buffer *cb, const void *item);
 
 int cb_pop_front(circular_buffer *cb, void *item);
 
+void cb_flush(circular_buffer *cb);
+
 #endif

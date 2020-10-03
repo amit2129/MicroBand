@@ -15,6 +15,8 @@ void cb_init(circular_buffer *cb, size_t capacity, size_t sz)
   cb->sz = sz;
   cb->head = cb->buffer;
   cb->tail = cb->buffer;
+
+  pthread_mutex_init(&cb->lock, NULL);
 }
 
 void cb_free(circular_buffer *cb)
@@ -66,4 +68,14 @@ int cb_pop_front(circular_buffer *cb, void *item)
   // unlocking
   pthread_mutex_unlock(&cb->lock);
   return 0;
+}
+
+void cb_flush(circular_buffer *cb) {
+  pthread_mutex_lock(&cb->lock);
+  
+  cb->head = cb->buffer;
+  cb->tail = cb->buffer;
+  cb->count = 0;
+
+  pthread_mutex_unlock(&cb->lock);
 }

@@ -8,8 +8,10 @@ INFINIBAND_DIR=../infiniband
 #  -Wall turns on most, but not all, compiler warnings
 CFLAGS  = -Wall
 
+recv_send: mb_transport_recv.i mb_transport_send.i 
 
-all: mb_transport_recv.o mb_transport_send.o
+all:common_utils infiniband
+	$(CC) $(CFLAGS) -c src/*.c
 
 
 common_utils:
@@ -18,11 +20,11 @@ common_utils:
 infiniband:
 	make -C $(INFINIBAND_DIR) build_run_ll
 
-mb_transport_recv.o: common_utils infiniband
+mb_transport_recv.i: common_utils infiniband
 	$(CC) $(CFLAGS)  -c src/mb_transport_recv.c
 
-mb_transport_send.o: common_utils infiniband
-	$(CC) $(CFLAGS) $(COMMON_DIR)/*.o $(INFINIBAND_DIR)/*.o -c src/mb_transport_send.c
+mb_transport_send.i: common_utils infiniband
+	$(CC) $(CFLAGS)  -c src/mb_transport_send.c
 
 clean:
 	$(RM) *.o

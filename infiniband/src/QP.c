@@ -4,6 +4,7 @@
 #include "MR.h"
 #include "utils.h"
 #include <string.h>
+#include <stdio.h>
 #ifdef QP_LINKED_LIST
 	#include <stdlib.h>
 	#include "../../common/src/utils.h"
@@ -24,6 +25,9 @@ void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size) {
   cb_init(qp->recv_queue, queue_size, sizeof(WQE));
   qp->completion_queue = cq;
   qp->mem_reg = mr;
+  qp->state = QPS_RESET;
+
+
   #ifdef QP_LINKED_LIST
   	ll_insert_data(&qp_ll, (void *)qp);
   #endif
@@ -56,14 +60,15 @@ int post_recv(QP *qp, WQE *wr_r){
 }
 
 
-void process_send_handle(QP *qp, void *send_util) {
+int process_send_handle(QP *qp, void *send_util) {
   // do_some_sending
   WQE wr_s;
   uint8_t ret_pop_front = cb_pop_front(qp->send_queue, &wr_s);
   if (ret_pop_front){
-    return;
+    return 1;
   }
 
+//  printf("actually_sending_wr_id:%d\n", wr_s.wr_id);
   uint8_t ret = qp_send_func(qp, &wr_s, send_util);
 
   CQE cqe;
@@ -72,27 +77,32 @@ void process_send_handle(QP *qp, void *send_util) {
     cqe.wr_id = wr_s.wr_id;
     cqe.status = ret;
     cq_push_back(qp->completion_queue, &cqe);
+	return 2;
   }
-  else {
-    cqe.byte_len = wr_s.sge.length;
-    cqe.wr_id = wr_s.wr_id;
-    cqe.qp_num = qp->qp_num;
-    cqe.remote_qp_num = qp->remote_qp_num;
-    cqe.status = 0;
-    cq_push_back(qp->completion_queue, &cqe);
-  }
-}
+  cqe.byte_len = wr_s.sge.length;
+  cqe.wr_id = wr_s.wr_id;
+  cqe.qp_num = qp->qp_num;
+  cqe.remote_qp_num = qp->remote_qp_num;
+  cqe.status = 0;
+  cq_push_back(qp->completion_queue, &cqe);
+  return 0;
+ }
 
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {
   WQE wr_r;
   uint8_t ret_pop_front = cb_pop_front(qp->recv_queue, &wr_r);
   if (ret_pop_front){
+   // printf("no receive work request\n");
     return;
   }
-	
+
+//  printf("receiving data on QP:%d\n", qp->qp_num);
+
   write_to_mr(qp->mem_reg, wr_r.sge.addr - qp->mem_reg->buffer, data, data_len);
+  
   CQE cqe;
+  cqe.status = 0;
   cqe.byte_len = data_len;
   cqe.wr_id = wr_r.wr_id;
   cqe.qp_num = qp->qp_num;
@@ -110,4 +120,11 @@ void process_recv_handle(QP *qp, void *recv_util) {
 
   CQE cqe = qp_recv_func(qp, &wr_r, recv_util);
   cq_push_back(qp->completion_queue, &cqe);
+}
+
+
+void flush_qp(QP *qp) {
+  cb_flush(qp->send_queue);
+  cb_flush(qp->recv_queue);
+  flush_cq(qp->completion_queue);
 }

@@ -12,12 +12,10 @@ CFLAGS  = -Wall
 all: build
 
 build:
-	touch build
 	$(CC) $(CFLAGS) -c src/*.c
 
 
 build_test: build
-	touch build_test
 	$(CC) $(CFLAGS) -Isrc/ *.o test/main.c -o main
 
 test: build_test
@@ -25,7 +23,6 @@ test: build_test
 
 clean:
 	$(RM) *.o
-	$(RM) compiled
 	$(RM) build
 	$(RM) build_test
 

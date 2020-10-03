@@ -1,6 +1,6 @@
 #include "QP.h"
 #include "MR.h"
 #include "CQ.h"
-#include "Queue.h"
+#include "../../common/src/utils.h"
 #include "WR.h"
 #include "SGE.h"

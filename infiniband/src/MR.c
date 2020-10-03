@@ -3,10 +3,11 @@
 
 void init_mr(MR *mr, uint16_t sz){
   mr->sz = sz;
-  mr->buffer = (uint8_t * )malloc(sz * sizeof(uint8_t));
-  for (uint8_t i = 0; i < sz; i++) {
-    mr->buffer[i] = 0;
-  }
+  mr->buffer = (uint8_t * )malloc(sz);
+//  for (uint8_t i = 0; i < sz; i++) {
+ //   mr->buffer[i] = 0;
+//  }
+  pthread_mutex_init(&mr->lock, NULL);
 }
 
 void free_mr(MR *mr) {
@@ -22,19 +23,21 @@ void clear_mr(MR *mr) {
 
 int write_to_mr(MR *mr, uint32_t offset, uint8_t *src_buffer, uint32_t length) {
 	if (offset + length > mr->sz)
-		return 1;
+		return -1;
 
 	pthread_mutex_lock(&mr->lock);
 	memcpy(mr->buffer + offset, src_buffer, length);
 	pthread_mutex_unlock(&mr->lock);
+	return length;
 }
 
 int read_from_mr(MR *mr, uint32_t offset, uint8_t *dest_buffer, uint32_t length) {
 	if (offset + length > mr->sz)
-		return 1;
+		return -1;
 
 	pthread_mutex_lock(&mr->lock);
 	memcpy(dest_buffer, mr->buffer + offset, length);
 	pthread_mutex_unlock(&mr->lock);
+	return length;
 }
 

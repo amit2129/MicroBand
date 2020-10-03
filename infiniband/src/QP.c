@@ -7,7 +7,7 @@
 
 
 uint8_t (*qp_send_func)(QP *, WQE *, void *) = NULL;
-CQE (*qp_recv_func)(QP *, WQE *, void *) = NULL;
+CQE 	(*qp_recv_func)(QP *, WQE *, void *) = NULL;
 
 static int qp_counter = 0;
  
@@ -51,7 +51,7 @@ void process_send_handle(QP *qp, void *send_util) {
     return;
   }
 
-  uint8_t ret = (*qp_send_func)(qp, &wr_s, send_util);
+  uint8_t ret = qp_send_func(qp, &wr_s, send_util);
 
   CQE cqe;
 
@@ -75,13 +75,10 @@ void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {
   WQE wr_r;
   uint8_t ret_pop_front = cb_pop_front(qp->recv_queue, &wr_r);
   if (ret_pop_front){
-    #if defined(DEBUG)    
-      print_str("ret_pop_front non-0");
-    #endif
     return;
   }
+
   memcpy(wr_r.sge.addr, data, data_len);
-  // lets assume the receiver pipeline delivers data to this function
   CQE cqe;
   cqe.byte_len = data_len;
   cqe.wr_id = wr_r.wr_id;
@@ -95,18 +92,9 @@ void process_recv_handle(QP *qp, void *recv_util) {
   WQE wr_r;
   uint8_t ret_pop_front = cb_pop_front(qp->recv_queue, &wr_r);
   if (ret_pop_front){
-    #if defined(DEBUG)    
-      print_str("ret_pop_front non-0");
-    #endif
     return;
   }
 
-  CQE cqe = (*qp_recv_func)(qp, &wr_r, recv_util);
+  CQE cqe = qp_recv_func(qp, &wr_r, recv_util);
   cq_push_back(qp->completion_queue, &cqe);
- 
-//  CQE cqe;
-//  cqe.byte_len = data_len;
-//  cqe.wr_id = wr_r.wr_id;
-//  cqe.qp_num = qp->qp_num;
-//  cqe.remote_qp_num = qp->remote_qp_num;
 }

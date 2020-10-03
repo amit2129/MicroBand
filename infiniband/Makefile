@@ -18,5 +18,9 @@ build_run:
 	$(RM) -r *.o
 	$(CC) -c src/*.c
 
+build_run_ll:
+	$(RM) -r *.o
+	$(CC) -DQP_LINKED_LIST -c src/*.c
+
 clean:
 	$(RM) *.o

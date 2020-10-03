@@ -6,7 +6,7 @@
 #include "../src/MR.h"
 #include "../src/CQ.h"
 #include "../src/QP.h"
-#include "../src/Queue.h"
+#include "../../common/src/queue.h"
 #include "../src/utils.h"
 
 uint8_t cq_test();

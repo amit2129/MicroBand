@@ -1,7 +1,7 @@
 #ifndef CQ_H
 #define CQ_H
 #include "MR.h"
-#include "Queue.h"
+#include "../../common/src/queue.h"
 
 
 typedef struct cqe {

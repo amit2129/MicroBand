@@ -4,6 +4,7 @@ CC = gcc
 # compiler flags:
 #  -Wall turns on most, but not all, compiler warnings
 CFLAGS  = -Wall
+COMMON_DIR=../common
 
 # the build target executable:
 
@@ -13,6 +14,9 @@ build_test:
 	$(RM) -r *.o
 	$(CC) $(CFLAGS) -c -DDEBUG src/*.c
 	$(CC) $(CFLAGS) -c -DDEBUG test/*.c
+
+$(COMMON_DIR)/%.o:
+	make -C $(COMMON_DIR)
 
 build_run:
 	$(RM) -r *.o

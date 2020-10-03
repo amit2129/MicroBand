@@ -1,5 +1,4 @@
 #include "CQ.h"
-#include "Queue.h"
 
 static int cq_counter = 0;
 

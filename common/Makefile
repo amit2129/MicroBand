@@ -11,10 +11,10 @@ CFLAGS  = -Wall
 
 all: build
 
-
 build:
 	$(CC) $(CFLAGS) -c src/*.c
 
 clean:
 	$(RM) *.o
+	$(RM) compiled
 

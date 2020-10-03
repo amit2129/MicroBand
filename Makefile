@@ -4,6 +4,7 @@ BUILD_DIR=build
 SRC=src
 TEST=test
 INFINIBAND_DIR=$(SRC)/infiniband
+COMMON_DIR=common
 
 # compiler flags:
 #  -Wall turns on most, but not all, compiler warnings
@@ -14,7 +15,11 @@ TARGET = microband
 
 all: $(TARGET)_test
 
-$(TARGET)_run:
+$(COMMON_DIR)/compiled:
+	+$(MAKE) -C $(COMMON_DIR)
+	touch $(COMMON_DIR)/compiled
+
+$(TARGET)_run: $(COMMON_DIR)/compiled
 	$(RM) $(TARGET)
 	$(RM) $(TARGET)_test
 	+$(MAKE) build_run -C infiniband
@@ -23,7 +28,7 @@ $(TARGET)_run:
 	$(CC) $(CFLAGS) -o $(TARGET)_run $$(find . -name "*.o")
 	ln -s $(TARGET)_run $(TARGET)
 
-$(TARGET)_test:
+$(TARGET)_test: $(COMMON_DIR)/compiled
 	$(RM) $(TARGET)
 	$(RM) $(TARGET)_run
 	+$(MAKE) build_test -C infiniband
@@ -42,9 +47,11 @@ test: $(TARGET)_test
 
 run: $(TARGET)_run
 	@./$(TARGET)
+
 clean:
 	$(RM) $(TARGET)
 	$(RM) $(TARGET)_run
 	$(RM) $(TARGET)_test
 	$(RM) $(TARGET).c
 	$$(find . -name "*.o" -type f -delete)
+	+$(MAKE) clean -C $(COMMON_DIR)

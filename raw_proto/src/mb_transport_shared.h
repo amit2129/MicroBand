@@ -2,6 +2,7 @@
 #define _MB_TRANSPORT_SHARED
 
 #define ETH_P_MB 0x2129
+#include <stdint.h>
 
 typedef struct microband_transport_header {
 	uint32_t source_qp;

@@ -54,6 +54,6 @@ clean:
 	$(RM) $(TARGET)_run
 	$(RM) $(TARGET)_test
 	$(RM) $(TARGET).c
-	$$(find . -name "*.o" -type f -delete)
-	@+$(MAKE) clean -C $(COMMON_DIR)
-	@+$(MAKE) clean -C infiniband
+	$(RM) $(TARGET).o
+	+$(MAKE) clean -C infiniband
+	+$(MAKE) clean -C $(COMMON_DIR)

@@ -44,6 +44,7 @@ build_test: $(TARGET)_test
 
 test: $(TARGET)_test
 	@./$(TARGET)
+	+$(MAKE) -C $(COMMON_DIR) test
 
 run: $(TARGET)_run
 	@./$(TARGET)

@@ -32,8 +32,9 @@ $(COMMON_DIR)/%.o:
 $(TRANSPORT_PROTO_DIR)/%.o:
 	make -C $(TRANSPORT_PROTO_DIR) mb_transport_recv.o
 
-$(TARGET1): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o
-	gcc $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o -o $(TARGET1) send_raw_packets.c
+$(TARGET1): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
+	echo $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o
+	gcc $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) send_raw_packets.c
 
 $(TARGET2): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
 	gcc $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET2) recv_raw_packets.c

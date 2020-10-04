@@ -14,30 +14,13 @@
 #include<netinet/tcp.h>
 #include<arpa/inet.h>           // to avoid warning at inet_ntoa
 
-// keep QPs in a linked list
+// keep QPs in a linked list named qp_ll
 #define QP_LINKED_LIST
 
 #include "../../../infiniband/src/infiniband.h"
 #include "../../../common/src/utils.h"
 #include "../../src/mb_transport_recv.h"
 
-
-void print_mr(MR *mr) {
-	int i;
-	for (i = 0; i < mr->sz; i++)
-	{
-	    if (i > 0)
-		    printf(":");
-	    else
-		    printf("\n");
-	    printf("%02X", mr->buffer[i]);
-	}
-	printf("\n");
-}
-
-
-//linked_list qp_ll;
-//
 
 void print_qp(void *data) {
 	QP *qp = (QP *)data;

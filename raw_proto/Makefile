@@ -22,7 +22,7 @@ mb_transport_recv.o: common_utils infiniband
 	$(CC) $(CFLAGS)  -c src/mb_transport_recv.c
 
 mb_transport_send.o: common_utils infiniband
-	$(CC) $(CFLAGS) $(COMMON_DIR)/*.o $(INFINIBAND_DIR)/*.o -c src/mb_transport_send.c
+	$(CC) $(CFLAGS)  -c src/mb_transport_send.c
 
 clean:
 	$(RM) *.o

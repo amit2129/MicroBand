@@ -29,7 +29,7 @@ int main() {
 
 		}
 		for (int i = 0; i< 5; i++) {
-				printf("ret: %d ", remove_node(&ll, nodeArray[i]));
+				printf("ret: %d ", ll_remove(&ll, nodeArray[i]));
 				printf("head is: %p\n", (void *)ll.head);
 		}
 

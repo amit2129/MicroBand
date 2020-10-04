@@ -14,6 +14,11 @@ all: build
 build:
 	$(CC) $(CFLAGS) -c src/*.c
 
+test: build
+	$(CC) $(CFLAGS) -Isrc/ *.o test/main.c -o main
+	./main
+
+
 clean:
 	$(RM) *.o
 	$(RM) compiled

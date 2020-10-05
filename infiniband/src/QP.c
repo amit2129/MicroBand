@@ -24,6 +24,8 @@ void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size) {
   cb_init(qp->recv_queue, queue_size, sizeof(WQE));
   qp->completion_queue = cq;
   qp->mem_reg = mr;
+
+
   #ifdef QP_LINKED_LIST
   	ll_insert_data(&qp_ll, (void *)qp);
   #endif
@@ -64,8 +66,12 @@ void process_send_handle(QP *qp, void *send_util) {
     return;
   }
 
+  printf("passed ret_pop\n");
+  printf("qp_send_func is: %p\n", qp_send_func);
+
   uint8_t ret = qp_send_func(qp, &wr_s, send_util);
 
+  printf("ret is %d\n", ret);
   CQE cqe;
 
   if (ret) {

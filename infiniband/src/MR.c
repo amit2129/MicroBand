@@ -3,7 +3,7 @@
 
 void init_mr(MR *mr, uint16_t sz){
   mr->sz = sz;
-  mr->buffer = (uint8_t * )malloc(sz * sizeof(uint8_t));
+  mr->buffer = (uint8_t * )malloc(sz);
   for (uint8_t i = 0; i < sz; i++) {
     mr->buffer[i] = 0;
   }

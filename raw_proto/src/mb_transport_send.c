@@ -33,9 +33,13 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 	struct send_util util = *(struct send_util *)send_util;
 	uint16_t data_len = wr_s->sge.length;
 
+//	printf("send")
+
+	printf("38 before send, data_len is: %d\n", util.send_len);
 	// wrote header to buffer
 	util.send_len += write_mb_header(qp, data_len, util.buffer + util.send_len);
 	// wrote data to buffer
+	printf("42 before send, data_len is: %d\n", util.send_len);
 	memcpy(util.buffer + util.send_len, wr_s->sge.addr, wr_s->sge.length);
 	util.send_len += wr_s->sge.length;
 
@@ -44,6 +48,8 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 	// buffer was preassigned
 	// send_len was increased
 	// sadr was preassigned
+	//
+	printf("52 before send, util data_len is: %d\n", util.send_len);
 	send_packet_util(&util);
 	return 0;
 }

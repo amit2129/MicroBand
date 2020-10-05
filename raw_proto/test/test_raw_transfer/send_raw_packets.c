@@ -81,9 +81,9 @@ int main(int argc, char *argv[]) {
 	send_wqe.sge.addr = mr.buffer;
 	send_wqe.sge.length = sizeof(uint32_t);
 
+	struct send_util su = {raw_socket, send_buffer, send_len, &sadr_ll};
 	send_wqe.wr_id = 0;
 	post_send(&qp, &send_wqe);
-	struct send_util su = {raw_socket, send_buffer, send_len, &sadr_ll};
 	process_send_handle(&qp, (void *)&su);
 	printf("sent_data from a qp\n");
 	return 0;

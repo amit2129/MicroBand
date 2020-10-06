@@ -32,6 +32,7 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 
 	struct send_util util = *(struct send_util *)send_util;
 	uint16_t data_len = wr_s->sge.length;
+	printf("data_len is: %d", data_len);
 
 //	printf("send")
 

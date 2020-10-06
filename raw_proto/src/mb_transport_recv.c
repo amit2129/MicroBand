@@ -2,40 +2,17 @@
 #include "mb_transport_recv.h"
 #include "../../infiniband/src/infiniband.h"
 
-int get_by_qp_num(void *vp_qp, void *vp_qp_num) {
-	return (((QP *)vp_qp)->qp_num == *(uint32_t *)vp_qp_num);
-}
 
-
-void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
-	uint32_t dest_qp_num = ntohs(mb_trns->dest_qp);
-	fprintf(log_txt, "attempting to dispatch to QP num: %d\n", dest_qp_num);
-	QP *qp = get_object_with_data(&qp_ll, &get_by_qp_num, (void *)&dest_qp_num);
-	if (qp) {
-		process_recv(qp, data, ntohs(mb_trns->data_len));
-		CQE cqe;
-		int ret_poll = cq_pop_front(qp->completion_queue, &cqe);
-		if (ret_poll)
-			fprintf(log_txt, "No cqe, receive failed for QP\n");
-		else 
-			fprintf(log_txt, "Successfully received at QP with byte_len: %d\n", cqe.byte_len);
-		return;
-
-	}
-	else {
-		printf("QP with dest_qp_num: %d not found\n", dest_qp_num);
-		exit(1);
-	}
-	
-	fprintf(log_txt, "no QP with num: %d\n", dest_qp_num);
-}
 
 
 
 void parse_payload(unsigned char* buffer,int data_len, mb_transport* mb_trns, FILE* log_txt){
 	int i=0;
-	unsigned char * data = (buffer);
+	unsigned char * data = buffer;
 	fprintf(log_txt,"\nData\n");
+	fprintf(log_txt,"data as str: %s\n", data);
+	float *float_ptr = (float*) (buffer + strlen(buffer) + 1);
+	fprintf(log_txt, "float_data: %f\n", *float_ptr);
 	
 	for(i=0;i<data_len;i++)
 	{

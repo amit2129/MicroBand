@@ -40,28 +40,28 @@ typedef struct pong_location {
 
 
 
-void send_self_location(QP *qp, struct send_util *su, player_location *loc, uint8_t *buffer){
-	printf("sending self location\n");
+void send_self_location(QP *qp, struct send_util *su, player_location *loc){
 	int send_len = 0;
+
+
 	MR *mem_reg = qp->mem_reg;
-	printf("strlen: %ld\n", strlen(loc->player_name) + 1);
-	memcpy(mem_reg, loc->player_name, strlen(loc->player_name) + 1);
+	
+	memcpy(mem_reg->buffer, loc->player_name, strlen(loc->player_name) + 1);
 	send_len += strlen(loc->player_name) + 1;
 
-	printf("fault?\n");
 	uint8_t *float_uint8_ptr = (uint8_t *)&loc->height;
-	memcpy(mem_reg, float_uint8_ptr, sizeof(float));
+	memcpy(mem_reg->buffer + send_len, float_uint8_ptr, sizeof(float));
 	send_len += sizeof(float);
-
-	printf("mr: %p\n mr_buffer:%p\n", qp->mem_reg->buffer);
 	
 	WQE send_wqe;
-	send_wqe.sge.addr = buffer;
+	send_wqe.sge.addr = mem_reg->buffer;
 	send_wqe.sge.length = send_len;
-	printf("before send, length: %d\n", send_wqe.sge.length);
+	printf("send length is: %d\n", send_len);
 	post_send(qp, &send_wqe);
 	process_send_handle(qp, (void *)su);
-	printf("after send\n");
+	
+	CQE cqe;
+	cq_pop_front(qp->completion_queue, &cqe);
 }
 
 
@@ -113,8 +113,8 @@ int main(int argc, char *argv[]) {
 	init_mr(&mr, 90);
 	QP qp;
 	init_qp(&qp, &mr, &cq, 10);
-	qp.qp_num = 21;
-	qp.remote_qp_num = 1;
+	qp.qp_num = 1;
+	qp.remote_qp_num = 0;
 
 	mr.buffer = (uint8_t *) malloc(90);
 	WQE send_wqe;
@@ -124,25 +124,41 @@ int main(int argc, char *argv[]) {
 	char *player_name = "hello";
 	player_location self_location;
 //	player_location remote_location;
-	self_location.player_name = player_name;
+	self_location.player_name = argv[2];
 	self_location.height = 0.5;
 	pong_location loc;
 
 
 	struct send_util su = {raw_socket, send_buffer, send_len, &sadr_ll};
-	struct send_util su_backup = su;
 	send_wqe.wr_id = 0;
-	post_send(&qp, &send_wqe);
-	process_send_handle(&qp, (void *)&su);
-	post_send(&qp, &send_wqe);
-	process_send_handle(&qp, (void *)&su);
+	//post_send(&qp, &send_wqe);
+	//process_send_handle(&qp, (void *)&su);
+	//post_send(&qp, &send_wqe);
+	//process_send_handle(&qp, (void *)&su);
+
+	WQE wqe;
+	wqe.sge.addr = mr.buffer;
+	wqe.sge.length = 10;
+	printf("before send, length: %d\n", wqe.sge.length);
+
 //	printf("sent_data from a qp\n");
 	while (1) {
 			sleep(1);
 			printf("in loop\n");
+		//	WQE wqe;
+		//	wqe.sge.addr = mr.buffer;
+		//	wqe.sge.length = 10;
+		//	wqe.wr_id = 3;
 
-			send_self_location(&qp, &su, &self_location, mr.buffer);
-			su = su_backup;
+			//MR *mem_reg = qp.mem_reg;
+			//printf("strlen: %ld\n", strlen(self_location.player_name) + 1);
+			//memcpy(mem_reg, self_location.player_name, strlen(self_location.player_name) + 1);
+			//send_len += strlen(self_location.player_name) + 1;
+			//wqe.sge.length = send_len;
+			//post_send(&qp, &wqe);
+			//process_send_handle(&qp, (void *)&su);
+			send_self_location(&qp, &su, &self_location);
+			//su = su_backup;
 
 	}
 	return 0;

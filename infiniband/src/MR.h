@@ -9,7 +9,7 @@
 typedef struct mr {
   uint8_t* buffer;
   uint16_t sz;
-  pthread_mutex_t rw_lock;
+  pthread_mutex_t lock;
 } MR;
 
 void init_mr(MR *mr, uint16_t sz);

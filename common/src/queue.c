@@ -15,6 +15,8 @@ void cb_init(circular_buffer *cb, size_t capacity, size_t sz)
   cb->sz = sz;
   cb->head = cb->buffer;
   cb->tail = cb->buffer;
+
+  pthread_mutex_init(&cb->queue_lock, NULL);
 }
 
 void cb_free(circular_buffer *cb)
@@ -31,10 +33,7 @@ int cb_push_back(circular_buffer *cb, const void *item)
     // unlocking
     pthread_mutex_unlock(&cb->queue_lock);
     return 1;
-  }
-
-
-  
+  }  
 
   memcpy(cb->head, item, cb->sz);
   cb->head = (char*)cb->head + cb->sz;
@@ -58,9 +57,6 @@ int cb_pop_front(circular_buffer *cb, void *item)
     pthread_mutex_unlock(&cb->queue_lock);
     return 1;
   }
-
-  // locking
-  pthread_mutex_lock(&cb->queue_lock);
 
   memcpy(item, cb->tail, cb->sz);
 

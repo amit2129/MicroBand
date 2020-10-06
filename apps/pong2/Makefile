@@ -22,17 +22,17 @@ TARGET1 = pong_client
 $(TARGET): $(TARGET1) 
 
 $(INFINIBAND_DIR)/%.o:
-	make -C $(INFINIBAND_DIR) build_run_ll
+	@+$(MAKE) -C $(INFINIBAND_DIR) build_run_ll
 
 $(COMMON_DIR)/%.o:
-	make -C $(COMMON_DIR)
+	@make -C $(COMMON_DIR)
 
 $(TRANSPORT_PROTO_DIR)/%.o:
-	make -C $(TRANSPORT_PROTO_DIR) mb_transport_recv.o
+	@make -C $(TRANSPORT_PROTO_DIR) mb_transport_recv.i
 
 $(TARGET1): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
-	echo $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o
-	gcc -pthread $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) $(TARGET1).c
+	@echo $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o
+	@gcc -pthread $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) $(TARGET1).c
 
 
 clean:

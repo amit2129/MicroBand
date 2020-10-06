@@ -14,6 +14,7 @@
 #include<netinet/tcp.h>
 #include<arpa/inet.h>           // to avoid warning at inet_ntoa
 
+#include <pthread.h>
 // keep QPs in a linked list named qp_ll
 #define QP_LINKED_LIST
 
@@ -21,6 +22,8 @@
 #include "../../../common/src/utils.h"
 #include "../../src/mb_transport_recv.h"
 
+#define SEND_WR_ID 1
+#define RECV_WR_ID 0
 
 int get_by_qp_num(void *vp_qp, void *vp_qp_num) {
 	return (((QP *)vp_qp)->qp_num == *(uint32_t *)vp_qp_num);
@@ -59,15 +62,136 @@ void print_qp(void *data) {
 	printf("___________________\n");
 }
 
+
+typedef struct dispatch_thread_args {
+	FILE *log_txt;
+} dispatch_thread_args;
+
+
+void *dispatch_function(void *recv_args) {
+    FILE *log_txt = ((dispatch_thread_args *)(recv_args))->log_txt;
+    unsigned char* buffer = (unsigned char *)malloc(65536); 
+    memset(buffer,0,65536);
+    struct sockaddr saddr;
+    int sock_r,saddr_len,buflen;
+
+    printf("starting dispatch_thread .... \n");
+    sock_r=socket(AF_PACKET,SOCK_RAW,htons(ETH_P_ALL)); 
+    if(sock_r<0){
+        printf("error in socket\n");
+    }
+
+    int zero = 0;
+    while(1){
+	saddr_len=sizeof (saddr);
+	buflen=recvfrom(sock_r,buffer,65536,0,&saddr,(socklen_t *)&saddr_len);
+
+	if(buflen<0){
+	    printf("error in reading recvfrom function\n");
+	}
+	fflush(log_txt);
+
+	if(!process_packet(buffer, log_txt)){
+	    QP *qp = get_object_with_data(&qp_ll, &get_by_qp_num, (void *)&zero);
+	    printf("QP is: %p\n", (void *)qp);
+	}
+    }
+    close(sock_r);
+}
+
+typedef struct connection_data {
+	int player_num;
+	player_location client1_loc;
+	player_location client2_loc;
+	pong_location pong_loc;
+	pthread_mutex_t lock;
+} conn_data;
+
+
+void copy_data(conn_data *src, conn_data *dst) {
+    pthread_mutex_lock(&src.lock);
+
+    dst->client1_loc = src->client1_loc;
+    dst->client2_loc = src->client2_loc;
+    dst->pong_loc = src->pong_loc;
+
+    pthread_mutex_unlock(&src.lock);
+}
+
+
+typedef struct client_connection_args {
+	float updated_location;
+	float *access_ptr;
+	conn_data *shared_data;
+	uint32_t client_qp_num;
+	QP *new_qp;
+} client_connection_args;
+
+
+void write_shared_location(player_location *ptr, player_location loc) {
+    pthread_mutex_lock(&src.lock);
+    *ptr = loc
+    pthread_mutex_unlock(&src.lock);
+}
+
+void *get_attribute(player_location *ptr)
+
+
+void poll_and_update_location(QP *qp, WQE *recv_wqe, player_location *shared_data_ptr){
+    CQE cqe;
+    while (cq_pop_front(qp->completion_queue, &cqe)) {
+        if cqe.wr_id == recv_wqe->wr_id {
+	    float received_location;
+	    uint8_t *reinterpret_ptr = (uint8_t *)received_location;
+	    uint32_t offset = recv_wqe->sge.addr - qp->mem_reg.buffer;
+	    read_from_mr(qp->mem_reg, offset, reinterpret_ptr, sizeof(float));
+	    printf("data received from client is: %d", shared_location);
+	    write_shared_location(shared_data_ptr, )
+        }
+	else {
+	    // polled a send completion
+	}
+    }
+}
+
+void *client_connection(void *cc_args) {
+    client_connection_args *args = (client_connection_args *)cc_args;
+
+    player_location local;
+    player_location *access_ptr = cc_args->access_ptr;
+
+    conn_data *shared_data_ptr = cc_args->shared_data;
+    QP *qp = args->new_qp;
+    qp->remote_qp_num = args->client_qp_num;
+
+    // send is of exact size
+    WQE send_wqe;
+    send_wqe.sge.addr = qp->mem_reg.buffer;
+    send_wqe.sge.length = sizeof(player_location) + sizeof(pong_location);
+    send_wqe.wr_id = SEND_WR_ID
+
+
+    // recv is the rest of the mr_size
+    WQE recv_wqe;
+    recv_wqe.sge.addr = qp->mem_reg.buffer + send_wqe.sge.length;
+    recv_wqe.sge.length = qp->mem_reg.sz - send_wqe.sge.length;
+    recv_wqe.wr_id = RECV_WR_ID;
+
+    while(1) {
+	poll_and_update_objects(qp, recv_wqe, access_ptr);
+
+	post_recv(qp, &recv_wqe); // posting recv wqe to later receive
+
+	write_data_to_mr(qp->mem_reg, shared_data_ptr)
+	write_to_mr(qp->mem_reg, 0, )
+	post_send(&qp, &send_wqe);
+    }
+}
+
+
 int main()
 {
-
-	struct sockaddr saddr;
-	int sock_r,saddr_len,buflen;
-
-	unsigned char* buffer = (unsigned char *)malloc(65536); 
-	memset(buffer,0,65536);
-
+	
 	FILE *log_txt=fopen("log.txt","w");
 	if(!log_txt)
 	{
@@ -76,19 +200,11 @@ int main()
 
 	}
 
-	printf("starting .... \n");
-
-	sock_r=socket(AF_PACKET,SOCK_RAW,htons(ETH_P_ALL)); 
-	if(sock_r<0)
-	{
-		printf("error in socket\n");
-		return -1;
-	}
 	ll_init(&qp_ll);
 	
 	// init objects:
-	const int OBJECT_NUM = 2;
-	const int OBJECT_SIZE = 10;
+	const int OBJECT_NUM = 1;
+	const int OBJECT_SIZE = 20;
 
 
 	QP qps[OBJECT_NUM];
@@ -105,12 +221,9 @@ int main()
 		printf("qp_num is: %d\n", qps[i].qp_num);
 
 		wqes[i].sge.addr = mrs[i].buffer;
-		wqes[i].sge.length = 10;
+		wqes[i].sge.length = mrs[i].sz;
 		wqes[i].wr_id = get_wr_id();
 
-		post_recv(qps + i, wqes + i);
-		post_recv(qps + i, wqes + i);
-		post_recv(qps + i, wqes + i);
 		post_recv(qps + i, wqes + i);
 		
 		//ll_insert(&qp_ll, qp_nodes + i);
@@ -118,26 +231,18 @@ int main()
 	ll_print(&qp_ll, &print_qp);
 
 	int recv_num = 2;
-	while(1)
-	{
-		saddr_len=sizeof saddr;
-		buflen=recvfrom(sock_r,buffer,65536,0,&saddr,(socklen_t *)&saddr_len);
+	printf("finished\n");
 
-
-		if(buflen<0)
-		{
-			printf("error in reading recvfrom function\n");
-			return -1;
-		}
-		fflush(log_txt);
-		if (!process_packet(buffer, log_txt)) {
-			recv_num--;
-		}
-
+	pthread_t dispatch_thread;
+	dispatch_thread_args dta = {log_txt};
+	int iret1 = pthread_create(&dispatch_thread, NULL, dispatch_function, (void *)&log_txt);
+	if (iret1) {
+		perror("thread send creation failed\n");
+		exit(1);
 	}
 
-	close(sock_r);
-	printf("finished\n");
+	pthread_join(dispatch_thread, NULL);
+
 
 }
 

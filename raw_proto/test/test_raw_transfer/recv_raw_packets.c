@@ -39,12 +39,6 @@ void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
 			fprintf(log_txt, "No cqe, receive failed for QP\n");
 		else {
 			fprintf(log_txt, "Successfully received at QP with byte_len: %d\n", cqe.byte_len);
-			WQE wqe;
-			wqe.sge.addr = qp->mem_reg->buffer;
-			wqe.sge.length = 10;
-			wqe.wr_id = 3;
-
-			post_recv(qp, &wqe);
 		}
 		return;
 

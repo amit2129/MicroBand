@@ -22,6 +22,41 @@
 #include "../../src/mb_transport_recv.h"
 
 
+int get_by_qp_num(void *vp_qp, void *vp_qp_num) {
+	return (((QP *)vp_qp)->qp_num == *(uint32_t *)vp_qp_num);
+}
+
+
+void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
+	uint32_t dest_qp_num = ntohs(mb_trns->dest_qp);
+	fprintf(log_txt, "attempting to dispatch to QP num: %d\n", dest_qp_num);
+	QP *qp = get_object_with_data(&qp_ll, &get_by_qp_num, (void *)&dest_qp_num);
+	if (qp) {
+		process_recv(qp, data, ntohs(mb_trns->data_len));
+		CQE cqe;
+		int ret_poll = cq_pop_front(qp->completion_queue, &cqe);
+		if (ret_poll)
+			fprintf(log_txt, "No cqe, receive failed for QP\n");
+		else {
+			fprintf(log_txt, "Successfully received at QP with byte_len: %d\n", cqe.byte_len);
+			WQE wqe;
+			wqe.sge.addr = qp->mem_reg->buffer;
+			wqe.sge.length = 10;
+			wqe.wr_id = 3;
+
+			post_recv(qp, &wqe);
+		}
+		return;
+
+	}
+	else {
+		printf("QP with dest_qp_num: %d not found\n", dest_qp_num);
+		exit(1);
+	}
+	
+	fprintf(log_txt, "no QP with num: %d\n", dest_qp_num);
+}
+
 void print_qp(void *data) {
 	QP *qp = (QP *)data;
 	printf("\n\n_________QP________\n\n");
@@ -71,20 +106,25 @@ int main()
 		init_cq(cqs + i, OBJECT_SIZE);
 		init_mr(mrs + i, OBJECT_SIZE * 4);
 		init_qp(qps + i, mrs + i, cqs + i, OBJECT_SIZE);
-		qps[i].remote_qp_num = OBJECT_NUM-i;
+		qps[i].remote_qp_num = 1;
+		qps[i].qp_num = 0;
 		printf("qp_num is: %d\n", qps[i].qp_num);
 
 		wqes[i].sge.addr = mrs[i].buffer;
-		wqes[i].sge.length = sizeof(uint32_t);
+		wqes[i].sge.length = 10;
 		wqes[i].wr_id = get_wr_id();
 
 		post_recv(qps + i, wqes + i);
+		post_recv(qps + i, wqes + i);
+		post_recv(qps + i, wqes + i);
+		post_recv(qps + i, wqes + i);
+		
 		//ll_insert(&qp_ll, qp_nodes + i);
 	}
 	ll_print(&qp_ll, &print_qp);
 
 	int recv_num = 2;
-	while(recv_num)
+	while(1)
 	{
 		saddr_len=sizeof saddr;
 		buflen=recvfrom(sock_r,buffer,65536,0,&saddr,(socklen_t *)&saddr_len);

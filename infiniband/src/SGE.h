@@ -5,7 +5,7 @@
 
 typedef struct sge {
     uint8_t *addr;
-    uint8_t length;
+    uint16_t length;
 } SGE;
 
 

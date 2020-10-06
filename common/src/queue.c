@@ -25,14 +25,13 @@ void cb_free(circular_buffer *cb)
 
 int cb_push_back(circular_buffer *cb, const void *item)
 {
-
+  // locking
+  pthread_mutex_lock(&cb->lock);
   if (cb->count == cb->capacity) {
+    // unlocking
+    pthread_mutex_unlock(&cb->lock);
     return 1;
   }
-
-
-  // locking
-  pthread_mutex_lock(&cb->queue_lock);
 
   memcpy(cb->head, item, cb->sz);
   cb->head = (char*)cb->head + cb->sz;
@@ -41,7 +40,7 @@ int cb_push_back(circular_buffer *cb, const void *item)
   cb->count++;
 
   // unlocking
-  pthread_mutex_unlock(&cb->queue_lock);
+  pthread_mutex_unlock(&cb->lock);
 
   return 0;
 
@@ -49,12 +48,13 @@ int cb_push_back(circular_buffer *cb, const void *item)
 
 int cb_pop_front(circular_buffer *cb, void *item)
 {
+  // locking
+  pthread_mutex_lock(&cb->lock);
   if (cb->count == 0) {
+    // unlocking
+    pthread_mutex_unlock(&cb->lock);
     return 1;
   }
-
-  // locking
-  pthread_mutex_lock(&cb->queue_lock);
 
   memcpy(item, cb->tail, cb->sz);
 
@@ -64,6 +64,6 @@ int cb_pop_front(circular_buffer *cb, void *item)
   cb->count--;
 
   // unlocking
-  pthread_mutex_unlock(&cb->queue_lock);
+  pthread_mutex_unlock(&cb->lock);
   return 0;
 }

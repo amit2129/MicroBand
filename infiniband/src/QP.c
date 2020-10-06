@@ -58,12 +58,12 @@ int post_recv(QP *qp, WQE *wr_r){
 }
 
 
-void process_send_handle(QP *qp, void *send_util) {
+int process_send_handle(QP *qp, void *send_util) {
   // do_some_sending
   WQE wr_s;
   uint8_t ret_pop_front = cb_pop_front(qp->send_queue, &wr_s);
   if (ret_pop_front){
-    return;
+    return 1;
   }
 
   printf("passed ret_pop\n");
@@ -78,16 +78,16 @@ void process_send_handle(QP *qp, void *send_util) {
     cqe.wr_id = wr_s.wr_id;
     cqe.status = ret;
     cq_push_back(qp->completion_queue, &cqe);
+	return 2;
   }
-  else {
-    cqe.byte_len = wr_s.sge.length;
-    cqe.wr_id = wr_s.wr_id;
-    cqe.qp_num = qp->qp_num;
-    cqe.remote_qp_num = qp->remote_qp_num;
-    cqe.status = 0;
-    cq_push_back(qp->completion_queue, &cqe);
-  }
-}
+  cqe.byte_len = wr_s.sge.length;
+  cqe.wr_id = wr_s.wr_id;
+  cqe.qp_num = qp->qp_num;
+  cqe.remote_qp_num = qp->remote_qp_num;
+  cqe.status = 0;
+  cq_push_back(qp->completion_queue, &cqe);
+  return 0;
+ }
 
 
 void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {

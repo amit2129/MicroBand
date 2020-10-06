@@ -16,7 +16,7 @@ CFLAGS  = -Wall
 
 # the build target executable:
 TARGET = raw_proto_test
-TARGET1 = pong
+TARGET1 = pong_client
 
 
 $(TARGET): $(TARGET1) 
@@ -32,7 +32,7 @@ $(TRANSPORT_PROTO_DIR)/%.o:
 
 $(TARGET1): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
 	echo $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o
-	gcc $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) $(TARGET1).c
+	gcc -pthread $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) $(TARGET1).c
 
 
 clean:

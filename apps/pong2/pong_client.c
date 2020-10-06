@@ -66,12 +66,12 @@ void send_self_location(QP *qp, struct send_util *su, player_location *loc){
 	int send_len = 0;
 
 	MR *mem_reg = qp->mem_reg;
-	
-	memcpy(mem_reg->buffer, loc->player_name, strlen(loc->player_name) + 1);
+	write_to_mr(mem_reg, send_len, loc->player_name, strlen(loc->player_name) + 1);	
 	send_len += strlen(loc->player_name) + 1;
 
 	uint8_t *float_uint8_ptr = (uint8_t *)&loc->height;
-	memcpy(mem_reg->buffer + send_len, float_uint8_ptr, sizeof(float));
+
+	write_to_mr(mem_reg, send_len, float_uint8_ptr, sizeof(float));
 	send_len += sizeof(float);
 	
 	WQE send_wqe;
@@ -79,11 +79,7 @@ void send_self_location(QP *qp, struct send_util *su, player_location *loc){
 	send_wqe.sge.length = send_len;
 	send_wqe.wr_id = WR_ID_SEND;
 	printf("send length is: %d\n", send_len);
-	post_send(qp, &send_wqe);
-	//process_send_handle(qp, (void *)su);
-	
-//	CQE cqe;
-//	cq_pop_front(qp->completion_queue, &cqe);
+	post_send(qp, &send_wqe);	
 }
 
 

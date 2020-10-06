@@ -15,6 +15,8 @@ void cb_init(circular_buffer *cb, size_t capacity, size_t sz)
   cb->sz = sz;
   cb->head = cb->buffer;
   cb->tail = cb->buffer;
+
+  pthread_mutex_init(&cb->lock, NULL);
 }
 
 void cb_free(circular_buffer *cb)

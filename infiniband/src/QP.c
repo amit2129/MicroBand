@@ -4,6 +4,7 @@
 #include "MR.h"
 #include "utils.h"
 #include <string.h>
+#include <stdio.h>
 #ifdef QP_LINKED_LIST
 	#include <stdlib.h>
 	#include "../../common/src/utils.h"
@@ -96,7 +97,7 @@ void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {
   if (ret_pop_front){
     return;
   }
-	
+
   write_to_mr(qp->mem_reg, wr_r.sge.addr - qp->mem_reg->buffer, data, data_len);
   CQE cqe;
   cqe.byte_len = data_len;

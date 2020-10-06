@@ -42,7 +42,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -66,7 +66,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -90,7 +90,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -114,7 +114,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -138,7 +138,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -162,7 +162,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -186,7 +186,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -210,7 +210,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -234,7 +234,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -258,7 +258,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -282,7 +282,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -306,7 +306,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -330,7 +330,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -354,7 +354,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -378,7 +378,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -402,7 +402,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -426,7 +426,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -450,7 +450,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -474,7 +474,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 
@@ -498,103 +498,7 @@ float_data: 0.500000
  30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
  39  00  00  00  00  3F 
 attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
-*****************************************************************
-
-
-
-*************************MicroBand Packet******************************
-Ethernet Header
-	|-Source Address	: 94-DE-80-EA-C2-29
-	|-Destination Address	: 00-04-4B-EC-37-99
-	|-Protocol		: 2129
-
-Microband Transport Header
-	|-Source QP		: 1
-	|-Destination QP	: 0
-	|-Sequence Number	: 0
-	|-Ack Number		: 0
-	|-Data len		: 22
-
-Data
-data as str: 00:04:4b:ec:37:99
-float_data: 0.500000
- 30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
- 39  00  00  00  00  3F 
-attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
-*****************************************************************
-
-
-
-*************************MicroBand Packet******************************
-Ethernet Header
-	|-Source Address	: 94-DE-80-EA-C2-29
-	|-Destination Address	: 00-04-4B-EC-37-99
-	|-Protocol		: 2129
-
-Microband Transport Header
-	|-Source QP		: 1
-	|-Destination QP	: 0
-	|-Sequence Number	: 0
-	|-Ack Number		: 0
-	|-Data len		: 22
-
-Data
-data as str: 00:04:4b:ec:37:99
-float_data: 0.500000
- 30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
- 39  00  00  00  00  3F 
-attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
-*****************************************************************
-
-
-
-*************************MicroBand Packet******************************
-Ethernet Header
-	|-Source Address	: 94-DE-80-EA-C2-29
-	|-Destination Address	: 00-04-4B-EC-37-99
-	|-Protocol		: 2129
-
-Microband Transport Header
-	|-Source QP		: 1
-	|-Destination QP	: 0
-	|-Sequence Number	: 0
-	|-Ack Number		: 0
-	|-Data len		: 22
-
-Data
-data as str: 00:04:4b:ec:37:99
-float_data: 0.500000
- 30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
- 39  00  00  00  00  3F 
-attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
-*****************************************************************
-
-
-
-*************************MicroBand Packet******************************
-Ethernet Header
-	|-Source Address	: 94-DE-80-EA-C2-29
-	|-Destination Address	: 00-04-4B-EC-37-99
-	|-Protocol		: 2129
-
-Microband Transport Header
-	|-Source QP		: 1
-	|-Destination QP	: 0
-	|-Sequence Number	: 0
-	|-Ack Number		: 0
-	|-Data len		: 22
-
-Data
-data as str: 00:04:4b:ec:37:99
-float_data: 0.500000
- 30  30  3A  30  34  3A  34  62  3A  65  63  3A  33  37  3A  39 
- 39  00  00  00  00  3F 
-attempting to dispatch to QP num: 0
-Successfully received at QP with byte_len: 22
+No cqe, receive failed for QP
 *****************************************************************
 
 

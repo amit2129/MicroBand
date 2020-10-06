@@ -9,7 +9,7 @@ INFINIBAND_DIR=../infiniband
 CFLAGS  = -Wall
 
 
-all: mb_transport_recv.o mb_transport_send.o
+all: mb_transport_recv.i mb_transport_send.i
 
 
 common_utils:
@@ -18,10 +18,10 @@ common_utils:
 infiniband:
 	make -C $(INFINIBAND_DIR) build_run_ll
 
-mb_transport_recv.o: common_utils infiniband
+mb_transport_recv.i: common_utils infiniband
 	$(CC) $(CFLAGS)  -c src/mb_transport_recv.c
 
-mb_transport_send.o: common_utils infiniband
+mb_transport_send.i: common_utils infiniband
 	$(CC) $(CFLAGS)  -c src/mb_transport_send.c
 
 clean:

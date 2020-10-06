@@ -2,6 +2,7 @@
 #define QUEUE_H
 
 #include <stdlib.h>
+#include <pthread.h>
 
 typedef struct circular_buffer
 {
@@ -12,6 +13,7 @@ typedef struct circular_buffer
     size_t sz;        // size of each item in the buffer
     void *head;       // pointer to head
     void *tail;       // pointer to tail
+	pthread_mutex_t queue_lock;
 } circular_buffer;
 
 void cb_init(circular_buffer *cb, size_t capacity, size_t sz);

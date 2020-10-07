@@ -43,6 +43,13 @@ void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
 		else {
 			fprintf(log_txt, "Successfully received at QP with byte_len: %d\n", cqe.byte_len);
 		}
+		if (qp->qp_num == 0) {
+			WQE recv_wqe;
+			recv_wqe.sge.addr = qp->mem_reg->buffer;
+			recv_wqe.sge.length = qp->mem_reg->sz;
+			recv_wqe.wr_id = RECV_WR_ID;
+			post_recv(qp, &recv_wqe);
+		}
 		return;
 
 	}
@@ -81,7 +88,7 @@ void *dispatch_function(void *recv_args) {
         printf("error in socket\n");
     }
 
-    int zero = 0;
+    int packet_count = 0;
     while(1){
 	saddr_len=sizeof (saddr);
 	buflen=recvfrom(sock_r,buffer,65536,0,&saddr,(socklen_t *)&saddr_len);
@@ -92,101 +99,52 @@ void *dispatch_function(void *recv_args) {
 	fflush(log_txt);
 
 	if(!process_packet(buffer, log_txt)){
-	    QP *qp = get_object_with_data(&qp_ll, &get_by_qp_num, (void *)&zero);
-	    printf("QP is: %p\n", (void *)qp);
+		packet_count++;
+		printf("packet_count: %d\n", packet_count);
 	}
     }
     close(sock_r);
 }
 
-typedef struct connection_data {
-	int player_num;
-	player_location client1_loc;
-	player_location client2_loc;
-	pong_location pong_loc;
-	pthread_mutex_t lock;
-} conn_data;
-
-
-void copy_data(conn_data *src, conn_data *dst) {
-    pthread_mutex_lock(&src.lock);
-
-    dst->client1_loc = src->client1_loc;
-    dst->client2_loc = src->client2_loc;
-    dst->pong_loc = src->pong_loc;
-
-    pthread_mutex_unlock(&src.lock);
-}
-
-
-typedef struct client_connection_args {
-	float updated_location;
-	float *access_ptr;
-	conn_data *shared_data;
-	uint32_t client_qp_num;
-	QP *new_qp;
-} client_connection_args;
-
-
-void write_shared_location(player_location *ptr, player_location loc) {
-    pthread_mutex_lock(&src.lock);
-    *ptr = loc
-    pthread_mutex_unlock(&src.lock);
-}
-
-void *get_attribute(player_location *ptr)
-
-
-void poll_and_update_location(QP *qp, WQE *recv_wqe, player_location *shared_data_ptr){
-    CQE cqe;
-    while (cq_pop_front(qp->completion_queue, &cqe)) {
-        if cqe.wr_id == recv_wqe->wr_id {
-	    float received_location;
-	    uint8_t *reinterpret_ptr = (uint8_t *)received_location;
-	    uint32_t offset = recv_wqe->sge.addr - qp->mem_reg.buffer;
-	    read_from_mr(qp->mem_reg, offset, reinterpret_ptr, sizeof(float));
-	    printf("data received from client is: %d", shared_location);
-	    write_shared_location(shared_data_ptr, )
-        }
-	else {
-	    // polled a send completion
-	}
-    }
-}
-
-void *client_connection(void *cc_args) {
-    client_connection_args *args = (client_connection_args *)cc_args;
-
-    player_location local;
-    player_location *access_ptr = cc_args->access_ptr;
-
-    conn_data *shared_data_ptr = cc_args->shared_data;
-    QP *qp = args->new_qp;
-    qp->remote_qp_num = args->client_qp_num;
-
-    // send is of exact size
-    WQE send_wqe;
-    send_wqe.sge.addr = qp->mem_reg.buffer;
-    send_wqe.sge.length = sizeof(player_location) + sizeof(pong_location);
-    send_wqe.wr_id = SEND_WR_ID
-
-
-    // recv is the rest of the mr_size
-    WQE recv_wqe;
-    recv_wqe.sge.addr = qp->mem_reg.buffer + send_wqe.sge.length;
-    recv_wqe.sge.length = qp->mem_reg.sz - send_wqe.sge.length;
-    recv_wqe.wr_id = RECV_WR_ID;
-
-    while(1) {
-	poll_and_update_objects(qp, recv_wqe, access_ptr);
-
-	post_recv(qp, &recv_wqe); // posting recv wqe to later receive
-
-	write_data_to_mr(qp->mem_reg, shared_data_ptr)
-	write_to_mr(qp->mem_reg, 0, )
-	post_send(&qp, &send_wqe);
-    }
-}
+//typedef struct connection_data {
+//	int player_num;
+//	player_location client1_loc;
+//	player_location client2_loc;
+//	pong_location pong_loc;
+//	pthread_mutex_t lock;
+//} conn_data;
+//
+//
+//void copy_data(conn_data *src, conn_data *dst) {
+//    pthread_mutex_lock(&src.lock);
+//
+//    dst->client1_loc = src->client1_loc;
+//    dst->client2_loc = src->client2_loc;
+//    dst->pong_loc = src->pong_loc;
+//
+//    pthread_mutex_unlock(&src.lock);
+//}
+//
+//
+//typedef struct client_connection_args {
+//	float updated_location;
+//	float *access_ptr;
+//	conn_data *shared_data;
+//	uint32_t client_qp_num;
+//	QP *new_qp;
+//} client_connection_args;
+//
+//
+//void write_shared_location(player_location *ptr, player_location loc) {
+//    pthread_mutex_lock(&src.lock);
+//    *ptr = loc
+//    pthread_mutex_unlock(&src.lock);
+//}
+//
+//void *get_attribute(player_location *ptr, ) {
+//
+//}
+//
 
 
 int main()

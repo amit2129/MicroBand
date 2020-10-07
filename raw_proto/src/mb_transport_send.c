@@ -41,7 +41,7 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 	util.send_len += write_mb_header(qp, data_len, util.buffer + util.send_len);
 	// wrote data to buffer
 	printf("42 before send, data_len is: %d\n", util.send_len);
-	memcpy(util.buffer + util.send_len, wr_s->sge.addr, wr_s->sge.length);
+	read_from_mr(qp->mem_reg, wr_s->sge.addr - qp->mem_reg->buffer, util.buffer + util.send_len, wr_s->sge.length);
 	util.send_len += wr_s->sge.length;
 
 	// util fields

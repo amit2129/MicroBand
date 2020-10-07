@@ -29,8 +29,7 @@ struct send_thread_arg {
 void *send_thread_work(void *arg_ptr);
 
 struct recv_thread_arg {
-	QP *qp;
-	struct send_util *su;
+	FILE *log_txt;
 };
 
 

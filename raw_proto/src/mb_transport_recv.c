@@ -1,7 +1,7 @@
 #define QP_LINKED_LIST
 #include "mb_transport_recv.h"
 #include "../../infiniband/src/infiniband.h"
-
+#include <stdio.h>
 
 
 
@@ -10,9 +10,9 @@ void parse_payload(unsigned char* buffer,int data_len, mb_transport* mb_trns, FI
 	int i=0;
 	unsigned char * data = buffer;
 	fprintf(log_txt,"\nData\n");
-	fprintf(log_txt,"data as str: %s\n", data);
-	float *float_ptr = (float*) (buffer + strlen(buffer) + 1);
-	fprintf(log_txt, "float_data: %f\n", *float_ptr);
+//	fprintf(log_txt,"data as str: %s\n", data);
+//	float *float_ptr = (float*) (buffer + strlen(buffer) + 1);
+//	fprintf(log_txt, "float_data: %f\n", *float_ptr);
 	
 	for(i=0;i<data_len;i++)
 	{
@@ -52,10 +52,25 @@ void parse_ethernet_header(unsigned char* buffer, FILE *log_txt)
 }
 
 
+int validate_mac(uint8_t *mac_a, uint8_t *mac_b) {
+	printf("\t|-mac_a	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",mac_a[0],mac_a[1],mac_a[2],mac_a[3],mac_a[4],mac_a[5]);
+	printf("\t|-Source Address	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",mac_b[0],mac_b[1],mac_b[2],mac_b[3],mac_b[4],mac_b[5]);
+
+for (uint8_t i = 0; i < 6; i++) {
+	if (mac_a[i] != mac_b[i])
+			return 1;
+}
+return 0;
+
+
+}
+
+
 int process_packet(unsigned char* buffer, FILE *log_txt)
 {
 
 	struct ethhdr *eth = (struct ethhdr *)(buffer);
+//	printf("h_proto: %d\n",ntohs(eth->h_proto));
 	if (ntohs(eth->h_proto) == ETH_P_MB) {
 
 	fprintf(log_txt,"\n*************************MicroBand Packet******************************");

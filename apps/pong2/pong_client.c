@@ -19,6 +19,7 @@
 #include <stdlib.h>
 #include <pthread.h>
 #include<arpa/inet.h>
+#include <unistd.h>
 
 #define ETH_P_MB 0x2129
 #include <stdlib.h>
@@ -26,6 +27,8 @@
 
 #include "pong_client.h"
 #include "../../common/src/utils.h"
+#include "../../raw_proto/src/mb_transport_recv.h"
+
 
 
 struct ifreq ifreq_c,ifreq_i,ifreq_ip;
@@ -53,8 +56,7 @@ void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
 
 	}
 	else {
-		printf("QP with dest_qp_num: %d not found\n", dest_qp_num);
-		exit(1);
+		printf("QP with dest_qp_num: %d not found (sent from qp_num:%d)\n", dest_qp_num, ntohs(mb_trns->source_qp));
 	}
 	
 	fprintf(log_txt, "no QP with num: %d\n", dest_qp_num);
@@ -66,7 +68,7 @@ void send_self_location(QP *qp, struct send_util *su, player_location *loc){
 	int send_len = 0;
 
 	MR *mem_reg = qp->mem_reg;
-	write_to_mr(mem_reg, send_len, loc->player_name, strlen(loc->player_name) + 1);	
+write_to_mr(mem_reg, send_len, loc->player_name, strlen(loc->player_name) + 1);	
 	send_len += strlen(loc->player_name) + 1;
 
 	uint8_t *float_uint8_ptr = (uint8_t *)&loc->height;
@@ -97,28 +99,65 @@ void *send_thread_work(void *arg_ptr) {
 	QP *qp = sta->qp;
 	struct send_util *su = sta->su;
 	while(1) {
-		sleep(1);
-		printf("handling send\n");
+//		usleep(50000);
+//		printf("handling send\n");
+
+//		pthread_mutex_lock(&lock);
 		process_send_handle(qp, (void *)su);
+//		pthread_mutex_unlock(&lock);
 	}
 	return NULL;
-
 }
 
 
-
 void *recv_thread_work(void *arg_ptr) {
+	FILE *log_txt = ((struct recv_thread_arg *)arg_ptr)->log_txt;	
+    unsigned char* buffer = (unsigned char *)malloc(65536); 
+    memset(buffer,0,65536);
+    struct sockaddr saddr;
+    int sock_r,saddr_len,buflen;
 
-	while (1) {
-		sleep(1);
-		printf("handling recv\n");
-	}
+    printf("starting recv_thread .... \n");
+    sock_r=socket(AF_PACKET,SOCK_RAW,htons(ETH_P_ALL)); 
+    if(sock_r<0){
+        printf("error in socket\n");
+    }
+
+    int packet_count = 0;
+    while(1){
+			saddr_len=sizeof (saddr);
+			buflen=recvfrom(sock_r,buffer,65536,0,&saddr,(socklen_t *)&saddr_len);
+
+			if (buflen<0){
+				printf("error in reading recvfrom function\n");
+			}
+
+			fflush(log_txt);
+
+//			pthread_mutex_lock(&lock);
+			if(!process_packet(buffer, log_txt)){
+				packet_count++;
+				printf("packet_count: %d\n", packet_count);
+			}
+//			pthread_mutex_unlock(&lock);
+
+    }
+    close(sock_r);	
 	return NULL;
 }
 
 
 
 int main(int argc, char *argv[]) {
+
+	FILE *log_txt=fopen("log.txt","w");
+	if(!log_txt)
+	{
+		printf("unable to open log.txt\n");
+		return -1;
+
+	}
+//pthread_mutex_init(&lock, NULL);
 	qp_send_func = &send_data;
 	int raw_socket;
 	uint16_t send_len = 0;
@@ -161,7 +200,7 @@ int main(int argc, char *argv[]) {
 	qp.remote_qp_num = 0;
 	struct send_util su = {raw_socket, send_buffer, send_len, &sadr_ll};
 	struct send_thread_arg sta = {&qp, &su};
-	struct recv_thread_arg rta = {&qp, &su};
+	struct recv_thread_arg rta = {log_txt};
 
 	pthread_t send_thread, recv_thread;
 	int iret1 = pthread_create(&send_thread, NULL, send_thread_work, (void*)&sta);
@@ -177,7 +216,9 @@ int main(int argc, char *argv[]) {
 	}
 	game_thread(argv[2], &qp, &su);
    
-     pthread_join(send_thread, NULL);
+    pthread_join(send_thread, NULL);
+	pthread_join(recv_thread, NULL);
+
 //
 }
 
@@ -198,10 +239,11 @@ void game_thread(char *player_name, QP *qp, struct send_util *su) {
 
 	CQE cqe;
 	while (1) {
-		sleep(1);
-		printf("in loop\n");
+	//	usleep(50000);
 		int ret =  cq_pop_front(qp->completion_queue, &cqe);
-		printf("cq_pop return is: %d\n", ret);
+		if (ret == 1) {
+			printf("No new completions\n");
+		}
 		//	if (cqe.wr_id == WR_ID_SEND)
 		send_self_location(qp, su, &self_location);
 		//	else

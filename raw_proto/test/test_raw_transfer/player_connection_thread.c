@@ -18,6 +18,12 @@ void poll_and_update_location(QP *qp, WQE *recv_wqe, player_location *shared_dat
     }
 }
 
+typedef struct client_connection_args {
+	uint8_t mr_offset;
+	QP *new_qp;
+} client_connection_args;
+
+
 void *client_connection(void *cc_args) {
     client_connection_args *args = (client_connection_args *)cc_args;
 

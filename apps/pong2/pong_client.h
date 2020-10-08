@@ -14,6 +14,15 @@ typedef struct pong_location {
 } pong_location;
 
 
+typedef struct game_data {
+		float player_loc;
+		float remote_player_loc;
+		float pong_x;
+		float pong_y;
+    pthread_mutex_t lock;
+} game_data;
+
+
 #define WR_ID_RECV 0
 #define WR_ID_SEND 1
 
@@ -30,12 +39,13 @@ void *send_thread_work(void *arg_ptr);
 
 struct recv_thread_arg {
 	FILE *log_txt;
+	uint8_t *local_mac;
 };
 
 
 void *recv_thread_work(void *arg_ptr);
 
 
-void game_thread(char *player_name, QP *qp, struct send_util *su); 
+void game_thread(char *player_name, QP *qp); 
 
 #endif

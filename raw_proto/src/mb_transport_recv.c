@@ -40,41 +40,43 @@ void parse_mb_transport_header(unsigned char* buffer, FILE *log_txt){
 	fprintf(log_txt,"*****************************************************************\n\n\n");
 }
 
+int validate_mac(uint8_t *mac_a, uint8_t *mac_b) {
 
-void parse_ethernet_header(unsigned char* buffer, FILE *log_txt)
+	for (uint8_t i = 0; i < 6; i++) {
+		if (mac_a[i] != mac_b[i]) {
+			printf("\t|-MAC-A	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",mac_a[0],mac_a[1],mac_a[2],mac_a[3],mac_a[4],mac_a[5]);
+			printf("\t|-MAC-B	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",mac_b[0],mac_b[1],mac_b[2],mac_b[3],mac_b[4],mac_b[5]);
+			return 1;
+		}
+	}
+	return 0;
+}
+
+
+void parse_ethernet_header(unsigned char* buffer, FILE *log_txt, uint8_t* local_mac)
 {
 	struct ethhdr *eth = (struct ethhdr *)buffer;
 	fprintf(log_txt,"\nEthernet Header\n");
 	fprintf(log_txt,"\t|-Source Address	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",eth->h_source[0],eth->h_source[1],eth->h_source[2],eth->h_source[3],eth->h_source[4],eth->h_source[5]);
 	fprintf(log_txt,"\t|-Destination Address	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",eth->h_dest[0],eth->h_dest[1],eth->h_dest[2],eth->h_dest[3],eth->h_dest[4],eth->h_dest[5]);
 	fprintf(log_txt,"\t|-Protocol		: %04x\n",ntohs(eth->h_proto));
+	if (validate_mac(eth->h_dest, local_mac)){
+			printf("packet dropped, wrong destination\n");
+			return;
+	}
 	parse_mb_transport_header(buffer + sizeof(struct ethhdr), log_txt);
 }
 
 
-int validate_mac(uint8_t *mac_a, uint8_t *mac_b) {
-	printf("\t|-mac_a	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",mac_a[0],mac_a[1],mac_a[2],mac_a[3],mac_a[4],mac_a[5]);
-	printf("\t|-Source Address	: %.2X-%.2X-%.2X-%.2X-%.2X-%.2X\n",mac_b[0],mac_b[1],mac_b[2],mac_b[3],mac_b[4],mac_b[5]);
 
-for (uint8_t i = 0; i < 6; i++) {
-	if (mac_a[i] != mac_b[i])
-			return 1;
-}
-return 0;
-
-
-}
-
-
-int process_packet(unsigned char* buffer, FILE *log_txt)
+int process_packet(unsigned char* buffer, FILE *log_txt, uint8_t *local_mac)
 {
 
 	struct ethhdr *eth = (struct ethhdr *)(buffer);
-//	printf("h_proto: %d\n",ntohs(eth->h_proto));
-	if (ntohs(eth->h_proto) == ETH_P_MB) {
+	if (eth->h_proto == htons(ETH_P_MB)) {
 
 	fprintf(log_txt,"\n*************************MicroBand Packet******************************");
-		parse_ethernet_header(buffer, log_txt);
+		parse_ethernet_header(buffer, log_txt, local_mac);
 		return 0;
 	}
 	else {

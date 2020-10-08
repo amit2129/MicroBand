@@ -93,7 +93,8 @@ uint16_t write_eth_header(uint8_t *packet_buffer,uint8_t *dest_mac){
    	eth->h_dest[4]    =  dest_mac[4];
    	eth->h_dest[5]    =  dest_mac[5];
 
-   	eth->h_proto = htons(ETH_P_MB); 
+	eth->h_proto = htons(ETH_P_MB);
+	printf("prot is: %d\n", htons(ETH_P_MB));
 
 	return sizeof(struct ethhdr);
 

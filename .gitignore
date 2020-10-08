@@ -4,3 +4,4 @@ microband_*
 *.o
 *.un~
 *.swp
+.*

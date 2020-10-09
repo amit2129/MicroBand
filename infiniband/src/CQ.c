@@ -11,6 +11,10 @@ void free_cq(CQ *cq) {
   cb_free(&cq->queue);
 }
 
+int cqe_count(CQ *cq) {
+    return cq->queue.count;
+}
+
 int cq_push_back(CQ *cq, CQE *cqe){
     return cb_push_back(&cq->queue, cqe);
 }

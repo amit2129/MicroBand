@@ -25,6 +25,7 @@ void init_qp(QP *qp, MR *mr, CQ *cq, uint8_t queue_size) {
   cb_init(qp->recv_queue, queue_size, sizeof(WQE));
   qp->completion_queue = cq;
   qp->mem_reg = mr;
+  qp->state = QPS_RESET;
 
 
   #ifdef QP_LINKED_LIST

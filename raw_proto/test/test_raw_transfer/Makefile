@@ -17,7 +17,7 @@ CFLAGS  = -Wall
 # the build target executable:
 TARGET = raw_proto_test
 TARGET1 = send_raw
-TARGET2 = recv_raw
+TARGET2 = connection_establishment
 
 all: $(TARGET)_dockers
 
@@ -37,7 +37,7 @@ $(TARGET1): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
 	gcc $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) send_raw_packets.c
 
 $(TARGET2): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
-	gcc -pthread $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET2) recv_raw_packets.c
+	gcc -pthread $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET2) connection_establishment.c
 
 $(TARGET)_dockers: $(TARGET)
 	docker build . -t $(SERV) -f server_dockerfile

@@ -8,6 +8,8 @@
 	extern linked_list qp_ll;// = {.count=0, .head=NULL};
 #endif
 
+enum QP_State {QPS_RESET, QPS_INIT, QPS_RTR, QPS_RTS};
+
 typedef struct qp {
   uint8_t qp_num;
   uint8_t remote_qp_num;
@@ -15,6 +17,7 @@ typedef struct qp {
   circular_buffer *recv_queue;
   CQ *completion_queue;
   MR *mem_reg;
+  enum QP_State state; 
 } QP;
 
 

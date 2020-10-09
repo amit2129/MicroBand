@@ -18,7 +18,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <pthread.h>
-#include<arpa/inet.h>
+#include <arpa/inet.h>
 #include <unistd.h>
 
 #define ETH_P_MB 0x2129
@@ -70,7 +70,7 @@ void *send_thread_work(void *arg_ptr) {
     QP *qp = sta->qp;
     struct send_util *su = sta->su;
     while(1) {
-	usleep(500000);
+	usleep(1000000);
 	printf("handling send\n");
 
 	process_send_handle(qp, (void *)su);
@@ -108,7 +108,7 @@ void *recv_thread_work(void *arg_ptr) {
 
 	fflush(log_txt);
 
-	if(!process_packet(buffer, log_txt, local_mac)){
+	if(!process_packet(buffer, log_txt, local_mac, NULL)){
 	    packet_count++;
 	    printf("packet_count: %d\n", packet_count);
 	}
@@ -250,7 +250,7 @@ void game_thread(char *player_name, QP *qp) {
 
     game_data actual_game_data;
     float game_user_location = 0.5;
-
+	qp->state = QPS_INIT;
 
     post_send(qp, &send_wr);
     post_recv(qp, &recv_wr);

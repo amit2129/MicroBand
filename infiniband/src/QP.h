@@ -39,4 +39,6 @@ void process_recv(QP *qp, uint8_t *data, uint8_t data_len);
 
 void process_recv_handle(QP *qp, void *recv_util);
 
+void flush_qp(QP *qp);
+
 #endif

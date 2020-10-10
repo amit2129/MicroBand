@@ -3,6 +3,8 @@
 
 #define ETH_P_MB 0x2129
 #include <stdint.h>
+#include "../../infiniband/src/infiniband.h"
+
 
 typedef struct microband_transport_header {
 	uint32_t source_qp;
@@ -14,4 +16,5 @@ typedef struct microband_transport_header {
 	uint16_t reserved_2; // using for connection establishment atm
 } mb_transport;
 
+int get_by_qp_num(void *vp_qp, void *vp_qp_num);
 #endif

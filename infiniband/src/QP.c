@@ -68,12 +68,9 @@ int process_send_handle(QP *qp, void *send_util) {
     return 1;
   }
 
-  printf("passed ret_pop\n");
-  printf("qp_send_func is: %p\n", qp_send_func);
-
+//  printf("actually_sending_wr_id:%d\n", wr_s.wr_id);
   uint8_t ret = qp_send_func(qp, &wr_s, send_util);
 
-  printf("ret is %d\n", ret);
   CQE cqe;
 
   if (ret) {
@@ -102,6 +99,7 @@ void process_recv(QP *qp, uint8_t *data, uint8_t data_len) {
   write_to_mr(qp->mem_reg, wr_r.sge.addr - qp->mem_reg->buffer, data, data_len);
   
   CQE cqe;
+  cqe.status = 0;
   cqe.byte_len = data_len;
   cqe.wr_id = wr_r.wr_id;
   cqe.qp_num = qp->qp_num;
@@ -119,4 +117,11 @@ void process_recv_handle(QP *qp, void *recv_util) {
 
   CQE cqe = qp_recv_func(qp, &wr_r, recv_util);
   cq_push_back(qp->completion_queue, &cqe);
+}
+
+
+void flush_qp(QP *qp) {
+  cb_flush(qp->send_queue);
+  cb_flush(qp->recv_queue);
+  flush_cq(qp->completion_queue);
 }

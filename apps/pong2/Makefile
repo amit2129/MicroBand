@@ -28,11 +28,11 @@ $(COMMON_DIR)/%.o:
 	@make -C $(COMMON_DIR)
 
 $(TRANSPORT_PROTO_DIR)/%.o:
-	@make -C $(TRANSPORT_PROTO_DIR) mb_transport_recv.i
+	@make -C $(TRANSPORT_PROTO_DIR) all
 
 $(TARGET1): $(INFINIBAND_DIR)/%.o $(COMMON_DIR)/%.o $(TRANSPORT_PROTO_DIR)/%.o
 	@echo $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o
-	@gcc -pthread $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) $(TARGET1).c
+	@gcc -pthread  $(INFINIBAND_DIR)/*.o $(COMMON_DIR)/*.o $(TRANSPORT_PROTO_DIR)/*.o -o $(TARGET1) $(TARGET1).c
 
 
 clean:

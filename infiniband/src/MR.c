@@ -4,9 +4,9 @@
 void init_mr(MR *mr, uint16_t sz){
   mr->sz = sz;
   mr->buffer = (uint8_t * )malloc(sz);
-  for (uint8_t i = 0; i < sz; i++) {
-    mr->buffer[i] = 0;
-  }
+//  for (uint8_t i = 0; i < sz; i++) {
+ //   mr->buffer[i] = 0;
+//  }
   pthread_mutex_init(&mr->lock, NULL);
 }
 

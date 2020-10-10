@@ -8,8 +8,10 @@ INFINIBAND_DIR=../infiniband
 #  -Wall turns on most, but not all, compiler warnings
 CFLAGS  = -Wall
 
+recv_send: mb_transport_recv.i mb_transport_send.i 
 
-all: mb_transport_recv.i mb_transport_send.i
+all:common_utils infiniband
+	$(CC) $(CFLAGS) -c src/*.c
 
 
 common_utils:

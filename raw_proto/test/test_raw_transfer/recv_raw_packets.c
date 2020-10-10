@@ -120,17 +120,17 @@ void player_sync_thread(void *vp_player_inf) {
 
 void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
     uint32_t dest_qp_num = ntohs(mb_trns->dest_qp);
-    fprintf(log_txt, "attempting to dispatch to QP num: %d\n", dest_qp_num);
+   // fprintf(log_txt, "attempting to dispatch to QP num: %d\n", dest_qp_num);
     QP *qp = get_object_with_data(&qp_ll, &get_by_qp_num, (void *)&dest_qp_num);
     if (qp) {
 	process_recv(qp, data, ntohs(mb_trns->data_len));
 	CQE cqe;
 	int ret_poll = cq_pop_front(qp->completion_queue, &cqe);
-	if (ret_poll)
-	    fprintf(log_txt, "No cqe, receive failed for QP\n");
-	else {
-	    fprintf(log_txt, "Successfully received at QP with byte_len: %d\n", cqe.byte_len);
-	}
+//	if (ret_poll)
+//	    fprintf(log_txt, "No cqe, receive failed for QP\n");
+//	else {
+//	    fprintf(log_txt, "Successfully received at QP with byte_len: %d\n", cqe.byte_len);
+//	}
 	if (qp->qp_num == 0) {
 
 	    // create new QP, start connection thread.
@@ -150,7 +150,7 @@ void dispatch_to_qp(mb_transport *mb_trns, uint8_t *data, FILE *log_txt){
 	exit(1);
     }
 
-    fprintf(log_txt, "no QP with num: %d\n", dest_qp_num);
+//    fprintf(log_txt, "no QP with num: %d\n", dest_qp_num);
 }
 
 void print_qp(void *data) {

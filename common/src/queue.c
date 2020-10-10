@@ -69,3 +69,13 @@ int cb_pop_front(circular_buffer *cb, void *item)
   pthread_mutex_unlock(&cb->lock);
   return 0;
 }
+
+void cb_flush(circular_buffer *cb) {
+  pthread_mutex_lock(&cb->lock);
+  
+  cb->head = cb->buffer;
+  cb->tail = cb->buffer;
+  cb->count = 0;
+
+  pthread_mutex_unlock(&cb->lock);
+}

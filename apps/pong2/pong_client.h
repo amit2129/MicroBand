@@ -23,7 +23,7 @@ typedef struct game_data {
 } game_data;
 
 
-#define WR_ID_RECV 0
+#define WR_ID_RECV 2
 #define WR_ID_SEND 1
 
 void send_self_location(QP *qp, struct send_util *su, player_location *loc);

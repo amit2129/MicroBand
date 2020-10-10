@@ -8,7 +8,6 @@ uint16_t write_mb_header(QP *qp, uint8_t data_len, uint8_t *send_buffer)
 	mbh->dest_qp	= htons(qp->remote_qp_num);
 	mbh->data_len = htons(data_len);
     mbh->reserved_2 = htons(qp->state);
-	printf("send reserved_2 as: %d\n", qp->state);
 	return sizeof(mb_transport);
 }
 
@@ -34,7 +33,6 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 
 	struct send_util util = *(struct send_util *)send_util;
 	uint16_t data_len = wr_s->sge.length;
-	printf("data_len is: %d", data_len);
 
 	//	printf("send")
 
@@ -44,13 +42,14 @@ uint8_t send_data(QP *qp, WQE *wr_s, void *send_util) {
 	read_from_mr(qp->mem_reg, wr_s->sge.addr - qp->mem_reg->buffer, util.buffer + util.send_len, wr_s->sge.length);
 	util.send_len += wr_s->sge.length;
 
+//	printf("send_len is: %d\n", util.send_len);
+
 	// util fields
 	// socket was preassigned
 	// buffer was preassigned
 	// send_len was increased
 	// sadr was preassigned
 	//
-	printf("52 before send, util data_len is: %d\n", util.send_len);
 	send_packet_util(&util);
 	return 0;
 }

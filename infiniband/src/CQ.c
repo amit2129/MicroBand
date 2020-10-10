@@ -22,3 +22,7 @@ int cq_push_back(CQ *cq, CQE *cqe){
 int cq_pop_front(CQ *cq, CQE *cqe){
     return cb_pop_front(&cq->queue, cqe);
 }
+
+void flush_cq(CQ *cq) {
+    cb_flush(&cq->queue);
+}

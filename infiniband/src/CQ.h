@@ -29,4 +29,6 @@ int cq_push_back(CQ *cq, CQE *cqe);
 
 int cq_pop_front(CQ *cq, CQE *cqe);
 
+void flush_cq(CQ *cq);
+
 #endif
